@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+	<head>
+		<link type="text/css" rel="stylesheet" href="./webroot/css/style.css">
+		<link type="text/css" rel="stylesheet" href="./webroot/fonts/icons/style.css">
+		<script src="../../webroot/libs/jquery-1.x.x.min.js" ></script>
+		<script src='../../webroot/libs/rangeslider/rangeslider.min.js'></script>
+		<link type="text/css" rel="stylesheet" href='../../webroot/libs/rangeslider/rangeslider.css'>
+		<script src="./webroot/js/beat.js"></script>
+		<script src="./webroot/js/looper.js"></script>
+		<!-- polyfill -->
+		<script src="../../webroot/libs/MIDI/inc/shim/Base64.js" type="text/javascript"></script>
+		<script src="../../webroot/libs/MIDI/inc/shim/Base64binary.js" type="text/javascript"></script>
+		<script src="../../webroot/libs/MIDI/inc/shim/WebAudioAPI.js" type="text/javascript"></script>
+		<!-- midi.js package -->
+		<script src="../../webroot/libs/MIDI/js/midi/audioDetect.js" type="text/javascript"></script>
+		<script src="../../webroot/libs/MIDI/js/midi/gm.js" type="text/javascript"></script>
+		<script src="../../webroot/libs/MIDI/js/midi/loader.js" type="text/javascript"></script>
+		<script src="../../webroot/libs/MIDI/js/midi/plugin.audiotag.js" type="text/javascript"></script>
+		<script src="../../webroot/libs/MIDI/js/midi/plugin.webaudio.js" type="text/javascript"></script>
+		<script src="../../webroot/libs/MIDI/js/midi/plugin.webmidi.js" type="text/javascript"></script>
+		<!-- utils -->
+		<script src="../../webroot/libs/MIDI/js/util/dom_request_xhr.js" type="text/javascript"></script>
+		<script src="../../webroot/libs/MIDI/js/util/dom_request_script.js" type="text/javascript"></script>
+		<title>Beat Machine</title>
+		<style id="bars"></style>
+	</head>
+	<body>
+		<div id="header">
+			<div id="logo" class="icon icon-drum"></div><div id="name">Beat Machine</div>
+			<div id="volumeIcon" class="icon icon-volumefull">
+				<div id="slider">
+					<input type="range" min="0" max="255" step="1" value="128" data-rangeslider>
+				</div>
+			</div>
+			<div id="openIcon" class="icon icon-folder" title="Open"></div>
+			<div id="saveIcon" class="icon icon-floppy" title="Save"></div>
+		</div>
+		<div id="content">
+			<div id="load"></div>
+			<form id="table"></form>
+			<button id="moreButton"></button>
+			<div id="settings">
+				<button id="play">Play</button>
+				<button id="reset">Reset</button><br/>
+				<label for="bpm">Beats per minute</label>	<input type="number" name="bpm" 	id="bpm"><br/>
+				<label for="notes">Total notes</label>		<input type="number" name="notes" 	id="notes"><br/>
+				<label for="beats">Beats per bar</label>	<input type="number" name="beats" 	id="beats"><br/>
+				<label for="bar">Notes per bar</label>		<input type="number" name="bar" 	id="bar">
+			</div>
+		</div>
+		<div id="overlay">
+			<div id="background"></div>
+			<div id="message">
+				<h3 id="status">Loading...</h3>
+				<div id="songlist">
+				</div>
+				<button id="continueButton"><h3>Continue<h3></button>
+			</div>
+		</div>
+	</body>
+</html>

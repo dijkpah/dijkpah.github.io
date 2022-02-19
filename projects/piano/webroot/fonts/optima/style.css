@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'OptimaMediumMedium';
+    src: url('optima-medium.eot');
+    src: url('optima-medium.eot') format('embedded-opentype'),
+         url('optima-medium.woff') format('woff'),
+         url('optima-medium.ttf') format('truetype'),
+         url('optima-medium.svg#OptimaMediumMedium') format('svg');
+}

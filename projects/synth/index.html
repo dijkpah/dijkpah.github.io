@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+		<link type="text/css" rel="stylesheet" href="./webroot/fonts/kitchenpolice.css">
+		<link type="text/css" rel="stylesheet" href="./webroot/fonts/icons/style.css">
+		<link type="text/css" rel="stylesheet" href='../../webroot/libs/rangeslider/rangeslider.css'>
+		<link type="text/css" rel="stylesheet" href='./webroot/lib/alertify/css/core.css'>
+		<link type="text/css" rel="stylesheet" href='./webroot/lib/alertify/css/themes/bootstrap3/style.css'>
+		<link type="text/css" rel="stylesheet" href='./webroot/css/sidebar.css'>
+		<link type="text/css" rel="stylesheet" href="./webroot/css/style.css">
+		<link type="text/css" rel="stylesheet" href="./webroot/css/style.css">
+		<link type="text/css" rel="stylesheet" href="./webroot/css/tabs.css">
+		<!-- include the .js files for jsfx.js -->
+		<script src='./webroot/lib/jsfx/webaudiox.lineout.js'></script>
+		<script src='./webroot/lib/jsfx/webaudiox.jsfx.js'></script>
+		<script src="./webroot/lib/jsfx/vendor/audio.js"></script>
+		<script src="./webroot/lib/jsfx/vendor/jsfx.js"></script>
+		<script src="./webroot/lib/jsfx/vendor/jsfxlib.js"></script>
+
+
+		<script src="../../webroot/libs/jquery-1.x.x.min.js" ></script>
+		<script src='./webroot/lib/knob/jquery.knob.js'></script>
+		<script src='../../webroot/libs/rangeslider/rangeslider.min.js'></script>
+		<script src='webroot/lib/alertify/js/alertify.js'></script>
+
+		<script src="./webroot/js/cookieHandler.js"></script>
+		<script src="./webroot/js/keylistener_cached.js"></script>
+
+		<title>Synthesizer</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	</head>
+	<body>
+		<div id="wrapper" class="toggled">
+
+	        <!-- Sidebar -->
+	        <div id="sidebar-wrapper">
+	            <ul class="sidebar-nav">
+	                <li class="sidebar-brand" style="color:white;">Saved Sounds
+	                </li>
+					<div id="soundList"></div>
+	            </ul>
+	        </div>
+	        <!-- /#sidebar-wrapper -->
+
+	        <!-- Page Content -->
+	        <div id="page-content-wrapper">
+	            <div class="container-fluid">
+	                <div class="row">
+	                    <div class="col-lg-12" id="menu">
+						<div id="helpIcon" class="icon icon-help"></div>
+						<div id="saveIcon" class="icon icon-save"></div>
+						<div id="menuIcon" class="icon icon-menu"></div>
+							<div id="volumeIcon" class="icon icon-volumefull">
+								<div id="slider">
+									<input type="range" min="0" max="0.2" step="0.005" value="0.1" data-rangeslider>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-12" id="header">
+							<h1>synthesizer</h1>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-12" id="container">
+							<div id="piano">
+								<div class="octave">
+									<div id="17" class="key"></div>
+									<div id="19" class="key"></div>
+									<div id="21" class="key"></div>
+									<div id="23" class="key"></div>
+									<div id="18" class="key black left"></div>
+									<div id="20" class="key black middle"></div>
+									<div id="22" class="key black right"></div>
+
+									<div id="24" class="key"><p>c3</p></div>
+									<div id="26" class="key"></div>
+									<div id="28" class="key"></div>
+									<div id="25" class="key black middle"></div>
+									<div id="27" class="key black right"></div>
+								</div>
+								<div class="octave">
+									<div id="29" class="key"></div>
+									<div id="31" class="key"></div>
+									<div id="33" class="key"></div>
+									<div id="35" class="key"></div>
+									<div id="30" class="key black left"></div>
+									<div id="32" class="key black middle"></div>
+									<div id="34" class="key black right"></div>
+
+									<div id="36" class="key"><p>c4</p></div>
+									<div id="38" class="key"></div>
+									<div id="40" class="key"></div>
+									<div id="37" class="key black middle"></div>
+									<div id="39" class="key black right"></div>
+								</div>
+								<div class="octave">
+									<div id="41" class="key"></div>
+									<div id="43" class="key"></div>
+									<div id="45" class="key"></div>
+									<div id="47" class="key"></div>
+									<div id="42" class="key black left"></div>
+									<div id="44" class="key black middle"></div>
+									<div id="46" class="key black right"></div>
+
+									<div id="48" class="key"><p>c5</p></div>
+									<div id="50" class="key"></div>
+									<div id="52" class="key"></div>
+									<div id="49" class="key black middle"></div>
+									<div id="51" class="key black right"></div>
+								</div><div class="octave" style="min-width:128px;">
+									<div id="53" class="key"></div>
+									<div id="55" class="key"></div>
+									<div id="57" class="key"></div>
+									<div id="59" class="key"></div>
+									<div id="54" class="key black left"></div>
+									<div id="56" class="key black middle"></div>
+									<div id="58" class="key black right"></div>
+								</div>
+							</div>
+
+							<div id=tabs>
+								<ul class="tabs">
+									<li><a href="#tab1">Sound Shape</a></li>
+									<li><a href="#tab2">Phaser & Filters</a></li>
+									<li><a href="#tab3">Envelope</a></li>
+									<li><a href="#tab4">Duty & Vibrato</a></li>
+								</ul>
+								<div class="tabContainer">
+
+
+
+									<div id="tab1" class="tabContent">
+										<div class="wavebutton">
+											<img class="waveform" id="sine" src="./webroot/img/sin.svg"/>
+										</div>
+										<div class="wavebutton">
+											<img class="waveform" id="noise" src="./webroot/img/noise.png"/>
+										</div>
+										<div class="wavebutton">
+											<img class="waveform" id="synth" src="./webroot/img/synth.svg"/>
+										</div>
+										<div class="wavebutton">
+											<img class="waveform" id="tri" src="./webroot/img/tri.svg"/>
+										</div>
+										<div class="wavebutton">
+											<img class="waveform selected" id="saw" src="./webroot/img/saw.svg"/>
+										</div>
+										<div class="wavebutton">
+											<img class="waveform" id="square" src="./webroot/img/square.svg"/>
+										</div>
+										<br style="clear:both;"/>
+
+										<div class="knob">
+											<input type="text" class="dial" data-min="0" data-max="16" number="1">
+											<label><span>Quality</span></label>
+										</div>
+										<div class="knob">
+											<input type="text" class="dial" data-min="-200" data-max="0.0" number="7">
+											<label><span>Neg. Freq. Deviation Cap</span></label>
+										</div>
+										<div class="knob">
+											<input type="text" class="dial" data-min="0" data-max="200" number="9">
+											<label><span>Pos. Freq. Deviation Cap</span></label>
+										</div>
+										<div class="knob">
+											<input type="text" class="dial" data-min="-1" data-max="1" number="10">
+											<label><span>Slide</span></label>
+										</div>
+										<div class="knob">
+											<input type="text" class="dial" data-min="-1" data-max="1" number="11">
+											<label><span>Delta Slide</span></label>
+										</div>
+										<div class="knob">
+											<input type="text" class="dial" data-min="-1" data-max="1" number="16">
+											<label><span>Change Amount</span></label>
+										</div>
+										<div class="knob">
+											<input type="text" class="dial" data-min="0" data-max="1" number="17">
+											<label><span>Change Speed</span></label>
+										</div>
+									</div>
+
+
+
+									<div id="tab2" class="tabContent">
+										<div class="knob">
+											<input type="text" class="dial" data-min="-1" data-max="1" number="21">
+											<label><span>Phaser Offset</span></label>
+										</div>
+										<div class="knob">
+											<input type="text" class="dial" data-min="-1" data-max="1" number="22">
+											<label><span>Phaser Sweep</span></label>
+										</div>
+										<div class="knob">
+											<input type="text" class="dial" data-min="0" data-max="1" number="23">
+											<label><span>LP Cutoff</span></label>
+										</div>
+										<div class="knob">
+											<input type="text" class="dial" data-min="-1" data-max="1" number="24">
+											<label><span>LP Cutoff Sweep</span></label>
+										</div>
+										<div class="knob">
+											<input type="text" class="dial" data-min="0" data-max="1" number="25">
+											<label><span>LP Resonance</span></label>
+										</div>
+										<div class="knob">
+											<input type="text" class="dial" data-min="0" data-max="1" number="26">
+											<label><span>HP Cutoff</span></label>
+										</div>
+										<div class="knob">
+											<input type="text" class="dial" data-min="-1" data-max="1" number="27">
+											<label><span>HP Cutoff Sweep</span></label>
+										</div>
+									</div>
+
+
+
+									<div id="tab3" class="tabContent">
+										<div class="knob">
+											<input type="text" class="dial" data-min="0" data-max="1" number="3">
+											<label><span>Attack Time</span></label>
+										</div>
+										<div class="knob">
+											<input type="text" class="dial" data-min="0" data-max="2" number="4">
+											<label><span>Sustain Time</span></label>
+										</div>
+										<div class="knob">
+											<input type="text" class="dial" data-min="0" data-max="3" number="5">
+											<label><span>Sustain Punch</span></label>
+										</div>
+										<div class="knob">
+											<input type="text" class="dial" data-min="0" data-max="2" number="6">
+											<label><span>Decay Time</span></label>
+										</div>
+										<br style="clear:both;"/>
+										<div class="cutOff">
+											<input type="checkbox" name="cutOff" id="cutOff">
+											<label><span>Cutoff on key release</span></label>
+										</div>
+										<div class="cutOff">
+											<input type="checkbox" name="cutOffHard" id="cutOffHard">
+											<label><span>Hard Cutoff</span></label>
+										</div>
+									</div>
+
+
+
+									<div id="tab4" class="tabContent">
+										<div class="knob">
+											<input type="text" class="dial" data-min="0" data-max="0.5" number="18">
+											<label><span>Square Duty</span></label>
+										</div>
+										<div class="knob">
+											<input type="text" class="dial" data-min="-1" data-max="1" number="19">
+											<label><span>Square Duty Sweep</span></label>
+										</div>
+										<div class="knob">
+											<input type="text" class="dial" data-min="0" data-max="1" number="12">
+											<label><span>Vibrato Depth</span></label>
+										</div>
+										<div class="knob">
+											<input type="text" class="dial" data-min="0.01" data-max="47.592" number="13">
+											<label><span>Vibrato Frequency</span></label>
+										</div>
+										<div class="knob">
+											<input type="text" class="dial" data-min="-0.3" data-max="1" number="14">
+											<label><span>Vibrato Depth Slide</span></label>
+										</div>
+										<div class="knob">
+											<input type="text" class="dial" data-min="-1" data-max="1" number="15">
+											<label><span>Vibrato Freq. Slide</span></label>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+    	</div>
+
+		<div id="overlay">
+			<div id="background"></div>
+			<div id="content">
+				<h3 id="status">Loading...</h3>
+				<div id="whiteKeys">
+				</div>
+				<div id="blackKeys">
+				</div>
+				<div id="instructions">
+					<div class="kkey small">&#8592;</div><p>Lower an octave</p>
+					<div class="kkey small">&#8594;</div><p>Increase an octave</p>
+				</div>
+				<button id="switchButton"><h3>Switch Key Layout<h3></button>
+				<button id="startButton" class="disabled"><h3>Continue<h3></button>
+			</div>
+		</div>
+	</body>
+
+</html>

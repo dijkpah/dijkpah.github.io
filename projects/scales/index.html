@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+	<head>
+		<link type="text/css" rel="stylesheet" href="./webroot/css/style.css">
+		<link type="text/css" rel="stylesheet" href="../../webroot/fonts/coolvetica/styles.css">
+		<style type="text/css">
+		@-moz-document url-prefix() {
+			*{
+				-moz-box-sizing: border-box;
+			}
+			#neck table{
+				margin-top:10em;
+			}#neck table tr td{
+				display: table-cell;
+				position:relative;
+			}
+
+			.note{
+				position:relative;
+			}
+
+			td{
+				float:left;
+				margin-right:-0.26em;
+			}
+		}
+		</style>
+		<script src="./webroot/js/scales.js" charset="utf-8"></script>
+		<script src="../../webroot/libs/jquery-1.x.x.min.js" ></script>
+		<title>Scale Calculator</title>
+	</head>
+	<body>
+
+
+		<div id="content">
+
+			<div id="title">GUITAR SCALE CALCULATOR</div><br/>
+
+			<div id="neck">	</div><br/>
+
+			<h1>Tuning: </h1>
+			<div id="low-string">
+				<button class="add">+</button>
+				<button class="remove">-</button>
+			</div>
+			<div id="tuning">
+			</div>
+			<div id="high-string">
+				<button class="remove">-</button>
+				<button class="add">+</button>
+			</div><br/>
+
+
+
+			<h1>Scale: </h1>
+			<div id="scale"></div><br/>
+
+			<div id="keyselector">
+				<h1>Key: </h1>
+				<div id="key">
+					<button class="up"><div class="circle">&#x25B2;</div></button>
+					<input class="value" value="C" disabled="disabled">
+					<button class="down"><div class="circle">&#x25BC;</div></button>
+				</div>
+			</div>
+
+			<div id="notesselector">
+				<h1>Notes: </h1>
+				<div id="notes">
+				</div>
+			</div>
+
+		</div>
+	</body>
+	<script src="./webroot/js/interface.js" charset="utf-8"></script>
+	<script>
+	var selectedScale = "major";
+	var selectedTuning = ["E", "A", "D", "G", "B", "E"];
+	var selectedKey = "C";
+	</script>
+</html>

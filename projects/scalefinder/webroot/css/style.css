@@ -1,0 +1,188 @@
+*{
+	margin:0;
+	padding:0;
+	font:inherit;
+	font-size:0.94em;
+    box-sizing:border-box;
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans'), local('OpenSans'), url(http://themes.googleusercontent.com/static/fonts/opensans/v6/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff) format('woff');
+}
+body{
+	padding-top:2em;
+	font-family: 'Open Sans', sans-serif;
+	background-color:#111;
+	background:url(../img/bg.png);
+	min-width:550px;
+}
+input:disabled{
+	background:white;
+	color:black;
+}
+h1, #title{
+	font-family: 'Coolvetica', sans-serif;
+	color:white;
+	font-size:3em;
+	float:left;
+	margin-top:0;
+	min-width:110px;
+	padding-left:0 !important;
+}
+#title{
+	font-size:5em;
+	width:100%;
+	margin:0 auto;
+	margin-top:0;
+	margin-bottom:1em;
+	line-height:1em;
+	text-align:center;
+}
+#content{
+	margin:0 auto;
+}
+
+
+#scales{
+	color: white;
+}
+#scales tr{
+	vertical-align:center;
+}#scales tr:hover{
+	background: rgba(255,255,255,0.1);
+}
+#scales th{
+	color: white !important;
+	font-weight: bold;
+	text-align: left;
+}
+#scales td{
+	padding-right: 15px;
+}
+#scales td:last-child{
+	padding-right: 0 !important;
+}
+#scales{
+	font-size: 1.2em;
+	margin-top: 2em;
+	margin-bottom: 2em;
+}#scale input{
+    text-transform: capitalize;
+}
+#scales .subheader{
+	padding: 0;
+	text-align: center;
+	background: white;
+	color: black;
+	font-style: italic;
+	font-weight: bold;
+}
+#scales .name{
+	font-style: italic;
+	min-width:110px;
+}
+#scales .root{
+	padding-right:0;
+}
+#scales .notes{
+	min-width:150px;
+}
+
+#scales .chord, #scales .note{
+	background: #3e3a3a;
+	border-radius: 3px;
+
+	display: inline-block;
+	float: left;
+
+	text-align: center;
+	font-size: 12px;
+	line-height: 16px;
+	height: 16px;
+	min-width: 45px;
+	margin: 1px 2px;
+	padding: 0px 1px;
+}
+#scales .note{
+	width: 17px;
+	min-width: 0;
+	height: 17px;
+	color: white;
+	background: #3399FF;
+	text-shadow: black 1px 1px 1px;
+	border-radius: 50%;
+	margin:1px;
+}
+#scales .key{
+	background: #f39d00;
+}
+.link a{
+	color:white;
+	text-decoration: none;
+}
+
+
+/*GUI*/
+#additions{
+	width:40px;
+}
+#chordSelector .button, select{
+	height: 35px;
+}
+#chordKeys{
+	border-radius: 35% 0 0 35%;
+}
+#addChord{
+	font-size: 31px;
+	line-height: 31px;
+	padding: 2px 8px;
+	font-weight:bold;
+	color: white;
+	background: #23b32f;
+	border-radius: 0 35% 35% 0;
+	text-shadow: black 1px 1px 1px;
+}#addChord:hover{
+	cursor:pointer;
+}
+
+.circle{
+	margin:0 auto;
+	background:#888;
+	color:white;
+	width:1.5em;
+	line-height:1.5em;
+	height:1.5em;
+	border-radius:2em;
+}
+
+
+#notes .note{
+	transition-duration: 0.2s;
+	height:2em;
+	width:2em;
+	border-radius:1em;
+	background:#3399FF;
+	text-align:center;
+	color:white;
+	font-size:1.4em;
+	float:left;
+	margin-right:2px;
+	border: 4px solid transparent;
+}#notes .note:hover{
+	cursor:pointer;
+}#notes .note.disabled{
+	color:#333;
+	background:white;
+}#notes .note.key{
+	cursor:default;
+	background:orange;
+	color:white;
+}#notes .note.highlight{
+	border-color: #23b32f;
+}
+
+#chordSelector * , #scales, #notes{
+	float:left;
+}

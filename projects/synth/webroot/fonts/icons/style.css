@@ -1,0 +1,55 @@
+@font-face {
+	font-family: 'icomoon';
+	src:url('fonts/icomoon.eot?-evusog');
+	src:url('fonts/icomoon.eot?#iefix-evusog') format('embedded-opentype'),
+		url('fonts/icomoon.woff?-evusog') format('woff'),
+		url('fonts/icomoon.ttf?-evusog') format('truetype'),
+		url('fonts/icomoon.svg?-evusog#icomoon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+	font-family: 'icomoon';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.icon-menu:before {
+	content: "\e603";
+}
+.icon-add:before {
+	content: "\e602";
+}
+.icon-save:before {
+	content: "\e600";
+}
+.icon-open:before {
+	content: "\e601";
+}
+.icon-volumefull:before {
+	content: "\f0e2";
+}
+.icon-volumehalf:before {
+	content: "\f0e3";
+}
+.icon-volumemute:before {
+	content: "\f0e4";
+}
+.icon-volumemute2:before {
+	content: "\f0e5";
+}
+.icon-help:before {
+	content: "\e000";
+}
+.icon-delete:before {
+	content: "\ea0d";
+}

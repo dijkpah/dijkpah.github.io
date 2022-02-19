@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'ExmouthRegular';
+    src: url('exmouth_.eot');
+    src: url('exmouth_.eot') format('embedded-opentype'),
+         url('exmouth_.woff') format('woff'),
+         url('exmouth_.ttf') format('truetype'),
+         url('exmouth_.svg#ExmouthRegular') format('svg');
+}

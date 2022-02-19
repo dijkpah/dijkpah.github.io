@@ -1,0 +1,59 @@
+﻿<!doctype html>
+<html>
+	<head>
+		<link type="text/css" rel="stylesheet" href="./webroot/css/bs.css">
+		<link type="text/css" rel="stylesheet" href="./webroot/css/style.css">
+		<link type="text/css" rel="stylesheet" href="../../webroot/fonts/coolvetica/styles.css">
+		<link type="text/css" rel="stylesheet" href="./webroot/fonts/icomoon/style.css">
+		<script src="../../webroot/libs/jquery-1.x.x.min.js" ></script>
+		<script src="./webroot/js/script.js" charset="utf-8"></script>
+		<title>Scale Finder</title>
+	</head>
+	<body>
+
+		<div id="content" class="container">
+
+			<div id="title">SCALE FINDER</div><br/>
+
+			<div class="row">
+
+				<div id="keyselector" class="col-xs-12 col-md-2">
+					<h1 class="col-md-12">Key: </h1>
+					<select id="scaleKeys"></select>
+				</div>
+
+				<div id="notesselector" class="col-xs-12 col-md-6">
+					<h1 class="col-md-12">Notes: </h1>
+					<div id="notes">
+					</div>
+				</div>
+
+				<div id="chordSelector" class="col-xs-12 col-md-4">
+					<h1 class="col-md-12">Chord: </h1>
+					<select id="chordKeys"></select>
+					<select id="flavours"></select>
+					<select id="additions"></select>
+					<div id="addChord" class="button">+</div>
+				</div>
+
+			</div>
+			<div class="row">
+				<table id="scales" class="col-xs-12 col-lg-12">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Key</th>
+						<th>Notes</th>
+						<th>Triads</th>
+						<th>Sevenths</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody >
+				</tbody>
+				</table>
+			</div>
+		</div>
+	</body>
+	<script src="./webroot/js/interface.js" charset="utf-8"></script>
+</html>

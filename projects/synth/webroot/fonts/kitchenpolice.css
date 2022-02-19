@@ -1,0 +1,10 @@
+@font-face {
+    font-family: 'KitchenpoliceRegular';
+    src: url('kitchenpolice.eot');
+    src: url('kitchenpolice.eot') format('embedded-opentype'),
+         url('kitchenpolice.woff') format('woff'),
+         url('kitchenpolice.ttf') format('truetype'),
+         url('kitchenpolice.svg#KitchenpoliceRegular') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}

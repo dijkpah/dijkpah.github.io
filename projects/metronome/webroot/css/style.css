@@ -1,0 +1,318 @@
+*{
+	margin:0;
+	padding:0;
+	font:inherit;
+	font-family: 'Open Sans';
+	color:white;
+}html, body{
+	min-width:100%;
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans'), local('OpenSans'), url(http://themes.googleusercontent.com/static/fonts/opensans/v6/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff) format('woff');
+}
+
+body{
+	padding-top:2em;
+	font-family: 'Open Sans', sans-serif;
+	background-color:#111;
+	background:url(../img/bg.png);
+}
+button{
+	cursor:pointer;
+	padding: 0px 5px;
+	text-align:center;
+	font-weight: bold;
+	min-width:60px;
+	border: 0;
+	border-left:1px solid rgba(255, 255, 255, 0.11);
+	border-right:2px solid rgba(0, 0, 0, 0.2);
+	border-bottom:2px solid rgba(0, 0, 0, 0.2);
+}button:active{
+	border:0;
+	box-shadow: inset #333 1px 1px 4px;
+	padding: 0px 2px 2px 2px;
+}.icon{
+	color:white;
+	font-size:32px;
+	position:absolute;
+	top:10px;
+	height:32px;
+	width:32px;
+	cursor:pointer;
+}#volumeIcon{
+	right:75px;
+}#volumeIcon #slider{
+	position: absolute;
+	top:32px;
+	left:-44px;
+	background: #333;
+	padding:3px;
+	border-radius: 10px;
+	width:120px;
+	visibility: hidden;
+}#volumeIcon:hover #slider{
+	visibility: visible;
+}#helpIcon{
+	right:25px;
+}
+#overlay{
+	position:absolute;
+	top:0px;
+	left:0px;
+	height:100%;
+	width:100%;
+	min-width:800px;
+}#background{
+	position:absolute;
+	top:0px;
+	left:0px;
+	height:100%;
+	width:100%;
+	background-color:white;
+	opacity:0.2;
+}#content{
+	background: url('../img/bg.png');
+	padding:15px;
+	border:1px solid #EEE;
+	color:white;
+	height:450px;
+	border-radius: 5px;
+	width:677px;
+	margin:0 auto;
+	margin-top:35px;
+	position:relative;
+}
+
+
+h1, #title{
+	font-family: 'Coolvetica', sans-serif;
+	color:white;
+	font-size:3em;
+	margin-right:1em;
+	line-height:1.7em;
+	clear:left;
+	min-width:3.5em;
+}
+#title{
+	font-size:5em;
+	width:100%;
+	margin:0 auto;
+	margin-top:0;
+	line-height:1em;
+	text-align:center;
+}
+#subtitle{
+	font-family: 'Coolvetica', sans-serif;
+	color:white;
+	font-size:2.3em;
+	margin-right:1em;
+	font-style: italic;
+	line-height:2.7em;
+	clear:left;
+	min-width:3.5em;
+}#subtitle.focus{
+	color:#999;
+}
+
+#bpm{
+	width:100px;
+	font-size: 22px;
+	font-weight: bold;
+	cursor: pointer;
+}
+#bpm input{
+	color:black;
+	width:45px;
+}
+.accent, #playbutton, #tapbutton, #startbutton{
+	border-radius: 90%;
+	border: 5px solid white;
+	background: #3399FF;
+	font-size: 22px;
+	float:left;
+	color:white;
+}
+#playbutton{
+	height: 150px;
+	width:150px;
+	margin-top:-75px;
+	outline: none;
+}
+#tapbutton, #startbutton{
+	float:none;
+	height: 60px;
+	width:120px;
+	border-radius: 25px;
+	outline: none;
+}
+#startbutton.disabled{
+	background:#CCC;
+	cursor:not-allowed;
+}
+.accent{
+	margin-top:50px;
+	height: 50px;
+	width:50px;
+	margin-top:-30px;
+	background:url(../img/bg.png);
+}
+#primary.accent{
+	margin-right:150px;
+	background:#1D1D1D;
+}#primary.accent.active{
+	background: orange;
+}#secondary.accent{
+	margin-left:150px;
+	background:#1D1D1D;
+}#secondary.accent.active{
+	background: #3399FF;
+}
+#circles{
+	border-top: 2px dashed white;
+	margin-top:100px;
+	margin-bottom:100px;
+	width:570px;
+}
+#dragbox{
+	width:115px;
+}
+#dropbox{
+	width: 220px;
+	height: 60px;
+	border: 2px solid white;
+	border-left: 6px solid white;
+	border-right: 6px solid white;
+	position:relative;
+	clear: both;
+	font-size: 0;
+    -webkit-transition:width 500ms ease-in-out, height 0ms ease-in-out;
+    -moz-transition:   width 500ms ease-in-out, height 0ms ease-in-out;
+    -o-transition:     width 500ms ease-in-out, height 0ms ease-in-out;
+    transition:        width 500ms ease-in-out, height 0ms ease-in-out;
+}
+#dropbox:after, #dropbox:before{
+	content:":";
+	position: absolute;
+	line-height:50px;
+	height:60px;
+	font-size:60px;
+}
+#dropbox:before{
+	left:0;
+	border-left: 2px solid white;
+	margin-left: 4px;
+}
+#dropbox:after{
+	right:0;
+	border-right: 2px solid white;
+	margin-right: 4px;
+}
+
+.quaver, .placeholder{
+	border: 2px dashed white;
+	color:white;
+	float:left;
+	font-size:24px;
+	height:50px;
+	width:50px;
+	line-height:50px;
+	margin:1px;
+	cursor: move;
+}
+.placeholder{
+	float:none;
+}
+
+#dragbox, #dropbox{ list-style-type: none; margin: 0; padding: 0; width: 60%; }
+#dragbox li, #dropbox li { padding: 2px; display:inline-block; }
+#dragbox li span, #dropbox li span { position: absolute; margin-left: -1.3em; }
+.ui-sortable-helper .quaver, .ui-draggable-dragging .quaver{
+	border-style: solid;
+}
+#play.playing{
+	font-size: 0;
+	width: 10px;
+	height: 50px;
+	border-style: solid;
+	border-width: 0 20px 0 20px;
+	margin: 0 auto;
+	margin-left: 40px;
+	display: block;
+	border-color: white;
+}
+#play{
+	font-size: 0;
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 42.5px 0 42.5px 68px;
+	margin: 0 auto;
+	margin-left: 40px;
+	display: block;
+	border-color: transparent transparent transparent white;
+}
+
+
+
+
+.onoffswitch {
+    position: relative; width: 90px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+}
+.onoffswitch-checkbox {
+    display: none;
+}
+.onoffswitch-label {
+    display: block; overflow: hidden; cursor: pointer;
+    border: 2px solid #FFFFFF; border-radius: 20px;
+}
+.onoffswitch-inner {
+    display: block; width: 200%; margin-left: -100%;
+    transition: margin 0.3s ease-in 0s;
+}
+.onoffswitch-inner:before, .onoffswitch-inner:after {
+    display: block; float: left; width: 50%; height: 30px; padding: 0; line-height: 30px;
+    font-size: 14px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+    box-sizing: border-box;
+}
+.onoffswitch-inner:before {
+    content: "ON";
+    padding-left: 10px;
+	text-align:left;
+    background-color: #3399FF; color: #FFFFFF;
+}
+.onoffswitch-inner:after {
+    content: "OFF";
+    padding-right: 10px;
+    background-color: orange; color: white;
+    text-align: right;
+}
+.onoffswitch-switch {
+    display: block; width: 24px; margin: 3px;
+    background: #FFFFFF;
+    position: absolute; top: 0; bottom: 0;
+    right: 56px;
+    border: 2px solid #FFFFFF; border-radius: 20px;
+    transition: all 0.3s ease-in 0s;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+    margin-left: 0;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+    right: 0px;
+}
+#beatbutton .onoffswitch-inner:before {
+    content: "BEAT";
+}
+#beatbutton .onoffswitch-inner:after {
+    content: "BEEP";
+}
+#swingbutton .onoffswitch-inner:before {
+    content: "STR.";
+}
+#swingbutton .onoffswitch-inner:after {
+    content: "SWING";
+}

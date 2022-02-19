@@ -1,0 +1,81 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    background: #EEE;
+}
+
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.content .projects {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    max-width: 900px;
+    gap: 40px;
+    padding: 40px 40px 20px 40px;
+    background: white;
+    box-shadow: grey 1px 1px 5px 0px;
+    margin-bottom: 40px;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;;
+}
+
+/* Include placeholders to align last row to grid */
+.content .projects .placeholder,
+.content .projects .project {
+    flex-shrink: 0;
+    flex-grow: 0;
+    width: 200px;
+    height: 0px;
+    position: relative;
+}
+.content .projects .project {
+    --tile-radius: 36px;
+    height: 220px;
+    border-radius: var(--tile-radius);
+    box-shadow: black 1px 2px 7px 0px;
+    overflow: hidden;
+    filter: grayscale(1);
+}
+.content .projects .project:hover {
+    cursor: pointer;
+    filter: grayscale(0);
+}
+
+.content .projects .project img {
+    border: 1.5px solid black;
+    max-width: 200px;
+    border-top-left-radius: var(--tile-radius);
+    border-top-right-radius: var(--tile-radius);
+}
+.content .projects .project:hover img {
+    border-color: rgb(255,133,0);
+}
+
+.content .projects .project .title {
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    width: 100%;
+    background: #333;
+    color: white;
+    font-size: 28px;
+    font-family: Coolvetica;
+}
+.content .projects .project:hover .title {
+    background: rgb(255,133,0);
+    text-shadow: rgba(0,0,0,0.5) 1px 1px 1px;
+}

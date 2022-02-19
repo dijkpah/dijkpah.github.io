@@ -1,0 +1,215 @@
+*{
+	margin: 0;
+	padding: 0;
+}
+
+body{
+	font-family: Helvetica, Arial, sans-serif;
+	background-color: #101010;
+	background-image: -ms-linear-gradient(top, #333333 0%, #000000 100%);
+	background-image: -moz-linear-gradient(top, #333333 0%, #000000 100%);
+	background-image: -o-linear-gradient(top, #333333 0%, #000000 100%);
+	position:fixed;
+	min-height:100%;
+	width:100%;
+}
+
+#header:before{
+	-webkit-font-smoothing: antialiased;
+}
+#header{
+	font-family: 'OptimaMediumMedium';
+	font-size:24px;
+	height: 100px;
+	line-height:100px;
+	width: 100%;
+	margin-top: 50px;
+	margin-bottom: 2px;
+	text-align: center;
+	color: goldenrod;
+	background-color: black;
+	box-shadow: 0px 2px 1px rgb(151, 1, 1),
+		0px 0px 5px grey;
+	background-image: -ms-linear-gradient(bottom right, #000000 0%, #222222 100%);
+	background-image: -moz-linear-gradient(bottom right, #000000 0%, #222222 100%);
+	background-image: -o-linear-gradient(bottom right, #000000 0%, #222222 100%);
+	background-image: -webkit-gradient(linear, right bottom, left top, color-stop(0, #000000), color-stop(1, #222222));
+	background-image: -webkit-linear-gradient(bottom right, #000000 0%, #222222 100%);
+	background-image: linear-gradient(to top left, #000000 0%, #222222 100%);
+}.icon{
+	color:white;
+	font-size:32px;
+	position:absolute;
+	top:10px;
+	height:32px;
+	width:32px;
+	cursor:pointer;
+}#volumeIcon{
+	right:175px;
+}#volumeIcon #slider{
+	position: absolute;
+	top:32px;
+	left:-44px;
+	background: #333;
+	padding:3px;
+	border-radius: 10px;
+	width:120px;
+	visibility: hidden;
+}#volumeIcon #slider .rangeslider__fill {
+    background: rgb(151, 1, 1);
+}#volumeIcon:hover #slider{
+	visibility: visible;
+}#helpIcon{
+	right:125px;
+}
+
+#piano{
+	margin:0 auto;
+	position:relative;
+	width:800px;
+	margin-bottom:50px;
+	height:150px;
+}
+
+.octave{
+	float:left;
+	min-width:223px;
+	border-radius:3px;
+}
+
+.key{
+	background-color: rgb(255,252,232);
+	border:1px solid black;
+	width:30px;
+	height:150px;
+	float:left;
+	border-radius:4px;
+	box-shadow: 
+		0px 6px 1px rgb(241, 241, 228), 
+		0px 0px 0px black, 
+		0px 9px 3px black, 
+		0px 7px 0px black
+	;
+	cursor:pointer;
+}.key.pressed{
+	height: 155px;
+	box-shadow: 
+		0px 2px 1px rgb(241, 241, 228), 
+		0px 0px 0px black, 
+		inset 1px 2px 6px black, 
+		0px 4px 3px black
+	;
+}
+.key p{
+	text-align:center;
+	font-family:serif;
+	padding-top:125px;
+}.key.pressed p{
+	padding-top:130px;
+}
+
+.black.key{
+	background-color: rgb(16,16,16);
+	height: 88px;
+	width: 12px;
+	margin-right:-18px;
+	border-left: 3px solid rgb(32,32,32);
+	border-right: 3px solid rgb(31,31,30); 
+	border-bottom: 15px solid rgb(46,46,46);
+	border-radius: 0 0 4px 4px;
+	box-shadow: 3px 1px 6px #000;
+}.black.key.pressed{
+	height: 95px;
+	border-bottom: 10px solid rgb(46,46,46);
+	box-shadow: 2px 1px 6px #000;
+}
+
+.black.key.left{
+	margin-left:-108px;
+}.black.key.middle{
+	margin-left:-74px;
+}.black.key.right{
+	margin-left:-39px;
+}
+
+#overlay{
+	position:absolute;
+	top:0px;
+	left:0px;
+	height:100%;
+	width:100%;
+	min-width:800px;
+}#background{
+	position:absolute;
+	top:0px;
+	left:0px;
+	height:100%;
+	width:100%;
+	background-color:white;
+	opacity:0.2;
+}#content{
+	background-color:#333;
+	padding:15px;
+	border:1px solid #EEE;
+	color:white;
+	height:285px;
+	border-radius: 5px;
+	width:677px;
+	margin:0 auto;
+	margin-top:50px;
+	position:relative;
+}.kkey{
+	height:21px;
+	width:21px;
+	padding:60px 0px 2px 4px;
+	background-color:white;
+	color:black;
+	border:1px solid black;
+	float:left;
+	border-radius:3px;
+}.kkey.black{
+	background-color:black;
+	color:white;
+	border-color:white;
+	padding-top:33px;
+	margin: 0px 3px;
+	width:16px;
+}.kkey.last{
+	margin-right: 27px;
+}.kkey.small{
+	height:21px;
+	padding:2px 0px 2px 4px;
+	clear:both;
+}#blackKeys{
+	height: 65px;
+	position:absolute;
+	margin-top:-70px;
+	margin-left: 15px;
+}#whiteKeys{
+	height: 65px;
+	margin-top:35px;
+	clear: both;
+}#instructions{
+	margin-top: 50px;	
+}#instructions p{
+	line-height: 27px;
+	float:left;
+	margin-left:5px;
+}#startButton, #switchButton{
+	background-color:#101010;
+	border: 1px solid white;
+	border-radius: 5px;
+	padding:5px;
+	color:white;
+	position:absolute;
+	cursor:pointer;
+}#startButton{
+	left:313px;
+	top:243px;
+}#startButton.disabled{
+	opacity:0.2;
+	cursor:default;
+}#switchButton{
+	left:277px;
+	top:189px;
+}

@@ -1,0 +1,258 @@
+*{
+	margin: 0;
+	padding: 0;
+}
+
+body{
+	font-family: 'Open Sans', sans-serif;
+	background-image: url(../img/cubes.png);
+	position:absolute;
+	min-height:100%;
+	width:100%;
+}
+
+#header:before{
+	-webkit-font-smoothing: antialiased;
+}
+#menu{
+	height:50px;
+}
+#header{
+	font-family: 'KitchenpoliceRegular';
+	font-size:24px;
+	height: 100px;
+	line-height:100px;
+	background-color: #222;
+	background-image: url(../img/header_bg.png);
+	width: 100%;
+	margin-bottom: 50px;
+	text-align: center;
+	color: white;
+}.icon{
+	color:#222;
+	font-size:32px;
+	float:right;
+	padding:7px;
+	top:10px;
+	height:32px;
+	width:32px;
+	cursor:pointer;
+}#volumeIcon{
+	right:175px;
+}#volumeIcon #slider{
+	margin-top:5px;
+	margin-left:-44px;
+	background: #333;
+	padding:3px;
+	border-radius: 10px;
+	width:120px;
+	visibility: hidden;
+}#volumeIcon #slider .rangeslider__fill {
+    background: #3FBBB1; 
+}#volumeIcon:hover #slider{
+	visibility: visible;
+}
+
+
+#helpIcon{
+	right:125px;
+}
+
+#sidebar-wrapper .icon{
+	padding:0;
+	padding-top:10px;
+	padding-right:10px;
+	margin:0;
+	float:left;
+	color:white;
+	font-size:20px;
+	height:20px;
+	width:20px;
+}
+
+
+#piano{
+	margin:0 auto;
+	position:relative;
+	width:800px;
+	margin-bottom:50px;
+	height:150px;
+}
+
+.octave{
+	float:left;
+	min-width:223px;
+	border-radius:3px;
+}
+
+.key{
+	background-color: rgb(255,252,232);
+	border:1px solid black;
+	width:30px;
+	height:150px;
+	float:left;
+	border-radius:4px;
+	box-shadow:
+		0px 6px 1px rgb(241, 241, 228),
+		0px 0px 0px black,
+		0px 9px 3px black,
+		0px 7px 0px black
+	;
+	cursor:pointer;
+}.key.pressed{
+	height: 155px;
+	box-shadow:
+		0px 2px 1px rgb(241, 241, 228),
+		0px 0px 0px black,
+		inset 1px 2px 6px black,
+		0px 4px 3px black
+	;
+}
+.key p{
+	text-align:center;
+	padding-top:125px;
+}.key.pressed p{
+	padding-top:130px;
+}
+
+.black.key{
+	background-color: rgb(16,16,16);
+	height: 90px;
+	width: 12px;
+	margin-right:-18px;
+	margin-top:-2px;
+	border-left: 3px solid rgb(32,32,32);
+	border-right: 3px solid rgb(31,31,30);
+	border-bottom: 15px solid rgb(46,46,46);
+	box-shadow: 3px 1px 6px #000;
+}.black.key.pressed{
+	height: 95px;
+	border-bottom: 10px solid rgb(46,46,46);
+	box-shadow: 2px 1px 6px #000;
+}
+
+.black.key.left{
+	margin-left:-108px;
+}.black.key.middle{
+	margin-left:-74px;
+}.black.key.right{
+	margin-left:-39px;
+}
+
+#overlay{
+	position:absolute;
+	z-index:1000;
+	top:0px;
+	left:0px;
+	height:100%;
+	width:100%;
+	min-width:800px;
+}#background{
+	position:absolute;
+	top:0px;
+	left:0px;
+	height:100%;
+	width:100%;
+	background-color:white;
+	opacity:0.2;
+}#content{
+	background-color: #222;
+	background-image: url(../img/header_bg.png);
+	padding:15px;
+	border:1px solid #EEE;
+	color:white;
+	height:285px;
+	border-radius: 5px;
+	width:677px;
+	margin:0 auto;
+	margin-top:50px;
+	position:relative;
+}.kkey{
+	height:21px;
+	width:21px;
+	padding:60px 0px 2px 4px;
+	background-color:white;
+	color:black;
+	border:1px solid black;
+	float:left;
+	border-radius:3px;
+}.kkey.black{
+	background-color:black;
+	color:white;
+	border-color:white;
+	padding-top:33px;
+	margin: 0px 3px;
+	width:16px;
+}.kkey.last{
+	margin-right: 27px;
+}.kkey.small{
+	height:21px;
+	padding:2px 0px 2px 4px;
+	clear:both;
+}#blackKeys{
+	height: 65px;
+	position:absolute;
+	margin-top:-70px;
+	margin-left: 15px;
+}#whiteKeys{
+	height: 65px;
+	margin-top:35px;
+	clear: both;
+}#instructions{
+	margin-top: 50px;
+}#instructions p{
+	line-height: 27px;
+	float:left;
+	margin-left:5px;
+}#startButton, #switchButton{
+	background-color:#101010;
+	border: 1px solid white;
+	border-radius: 5px;
+	padding:5px;
+	color:white;
+	position:absolute;
+	cursor:pointer;
+}#startButton{
+	left:313px;
+	top:243px;
+}#startButton.disabled{
+	opacity:0.2;
+	cursor:default;
+}#switchButton{
+	left:277px;
+	top:189px;
+}
+
+
+.waveform{
+	opacity:0.6;
+}.waveform.selected{
+	opacity:1;
+}
+
+.knob{
+	padding-bottom:20px;
+	margin:23px;
+	float:left;
+	position:relative;
+}.knob label{
+	width:100px;
+	top: 75px;
+	text-align:center;
+	position: absolute;
+	left:0px;
+}.cutOff label{
+	width:100px;
+	top: 75px;
+	text-align:center;
+	left:0px;
+}
+.knob label span, .cutOff label span{
+	width:100px;
+	text-align:center;
+	font-size:1.5em;
+}
+.knob .dial{
+	font-size:16px !important;
+	margin-left:-80px !important;
+}
