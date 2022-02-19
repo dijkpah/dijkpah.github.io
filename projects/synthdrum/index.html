@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+		<link type="text/css" rel="stylesheet" href="./webroot/css/style.css">
+		<link type="text/css" rel="stylesheet" href="./webroot/css/drums.css">
+		<link type="text/css" rel="stylesheet" href="./webroot/fonts/icons/style.css">
+        <link type="text/css" rel="stylesheet" href="../../webroot/fonts/open-sans/style.css">
+		<script src="../../webroot/libs/jquery-1.x.x.min.js" ></script>
+		<script src='../../webroot/libs/rangeslider/rangeslider.min.js'></script>
+		<link type="text/css" rel="stylesheet" href='../../webroot/libs/rangeslider/rangeslider.css'>
+		<script src="./webroot/js/drum.js"></script>
+		<!-- polyfill -->
+		<script src="../../webroot/libs/MIDI/inc/shim/Base64.js" type="text/javascript"></script>
+		<script src="../../webroot/libs/MIDI/inc/shim/Base64binary.js" type="text/javascript"></script>
+		<script src="../../webroot/libs/MIDI/inc/shim/WebAudioAPI.js" type="text/javascript"></script>
+		<!-- midi.js package -->
+		<script src="../../webroot/libs/MIDI/js/midi/audioDetect.js" type="text/javascript"></script>
+		<script src="../../webroot/libs/MIDI/js/midi/gm.js" type="text/javascript"></script>
+		<script src="../../webroot/libs/MIDI/js/midi/loader.js" type="text/javascript"></script>
+		<script src="../../webroot/libs/MIDI/js/midi/plugin.audiotag.js" type="text/javascript"></script>
+		<script src="../../webroot/libs/MIDI/js/midi/plugin.webaudio.js" type="text/javascript"></script>
+		<script src="../../webroot/libs/MIDI/js/midi/plugin.webmidi.js" type="text/javascript"></script>
+		<!-- utils -->
+		<script src="../../webroot/libs/MIDI/js/util/dom_request_xhr.js" type="text/javascript"></script>
+		<script src="../../webroot/libs/MIDI/js/util/dom_request_script.js" type="text/javascript"></script>
+		<title>Synth Drums</title>
+		<style id="bars"></style>
+	</head>
+	<body>
+		<div id="bg" class="blurred"></div>
+		<div id="header">
+			<div id="logo" class="icon icon-drum"></div><div id="name">Synth Drums</div>
+			<div id="helpIcon" class="icon icon-question-circle-o"></div>
+			<div id="volumeIcon" class="icon icon-volumefull">
+				<div id="slider" class="hidden">
+					<input type="range" min="0" max="255" step="1" value="128" data-rangeslider>
+				</div>
+			</div>
+		</div>
+		<div id="content" class="blurred">
+			<div id="pedal"></div>
+			<div id="hihatpedal"></div>
+			<div id="bass">
+			</div>
+			<div id="snare" class="hexagon"></div>
+			<div id="floor" class="hexagon"></div>
+			<div id="left"  class="hexagon"></div>
+			<div id="right" class="hexagon"></div>
+			<div id="hihat" class="cymbal"></div>
+			<div id="crash" class="cymbal"></div>
+			<div id="ride"  class="cymbal"></div>
+		</div>
+		<div id="overlay">
+			<div id="pedalkeys" class="keys">
+				<div class="key">G</div>
+				<div class="key">H</div>
+				<div class="key">B</div>
+				<div class="key">N</div>
+				<div class="key space"></div>
+			</div>
+			<div id="hihatpedalkeys" class="keys">
+				<div class="key caps">Caps</div>
+				<div class="key shift">Shift</div>
+			</div>
+			<div id="snarekeys" class="keys hexagonal">
+				<div class="key">D</div>
+				<div class="key">F</div>
+				<div class="key">C</div>
+				<div class="key">V</div>
+			</div>
+			<div id="floorkeys" class="keys hexagonal">
+				<div class="key">J</div>
+				<div class="key">K</div>
+				<div class="key">M</div>
+				<div class="key">,</div>
+			</div>
+			<div id="leftkeys"  class="keys hexagonal">
+				<div class="key">3</div>
+				<div class="key">4</div>
+				<div class="key">E</div>
+				<div class="key">R</div>
+			</div>
+			<div id="rightkeys" class="keys hexagonal">
+				<div class="key">5</div>
+				<div class="key">6</div>
+				<div class="key">T</div>
+				<div class="key">Y</div>
+			</div>
+			<div id="hihatkeys" class="keys">
+				<div class="key">A</div>
+				<div class="key">S</div>
+				<div class="key">Z</div>
+				<div class="key">X</div>
+				<div class="key extra">L</div>
+			</div>
+			<div id="crashkeys" class="keys">
+				<div class="key">1</div>
+				<div class="key">2</div>
+				<div class="key">Q</div>
+				<div class="key">W</div>
+			</div>
+			<div id="ridekeys"  class="keys">
+				<div class="key">7</div>
+				<div class="key">8</div>
+				<div class="key">U</div>
+				<div class="key">I</div>
+			</div>
+            
+			<center>
+				<div id="instructions">
+					<h2>Click/tap the drums to make sound,</h2>
+					<h2>or use the keyboard</h2>
+					</br>
+					</br>
+					<h3 id="status">Loading...</h3>
+					</br>
+					<button id="continueButton" disabled="disabled"><h3>Continue<h3></button>
+				</div>
+			</center>
+		</div>
+	</body>
+</html>

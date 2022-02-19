@@ -1,0 +1,286 @@
+.hexagon {
+    position: absolute;
+    background-color: white; /*color of the main-background*/
+    -webkit-clip-path: polygon(50% 100%, 100% 75%, 100% 25%, 50% 0%, 0% 25%, 0% 75%);
+    -moz-clip-path: polygon(50% 100%, 100% 75%, 100% 25%, 50% 0%, 0% 25%, 0% 75%);
+    clip-path: polygon(50% 100%, 100% 75%, 100% 25%, 50% 0%, 0% 25%, 0% 75%);
+    z-index:1;
+    width:23.5%;
+    padding-bottom:26.5%;
+}
+.hexagon:after {
+    display: block;
+    content: "";
+    position: absolute;
+    --border-width: 3px;
+    width: calc(100% - 2 * var(--border-width));
+    height: calc(100% - 2 * var(--border-width));
+    top: var(--border-width);
+    left: var(--border-width);
+    -webkit-clip-path: polygon(50% 100%, 100% 75%, 100% 25%, 50% 0%, 0% 25%, 0% 75%);
+    -moz-clip-path: polygon(50% 100%, 100% 75%, 100% 25%, 50% 0%, 0% 25%, 0% 75%);
+    clip-path: polygon(50% 100%, 100% 75%, 100% 25%, 50% 0%, 0% 25%, 0% 75%);
+    z-index:2;
+    background: #333;
+}
+
+.tom, .cymbal, #bass, #pedal, #hihatpedal{
+    position:absolute;
+    height:0px;
+    z-index:1;
+}
+.cymbal{
+    border-radius:50%;
+    box-shadow: inset 0 0 6px grey, 0 0 6px black;
+
+    background: #333; /* For browsers that do not support gradients */
+    background: -webkit-radial-gradient(circle, #222, #444, #333, #444, #333); /* Safari */
+    background: -o-radial-gradient(circle, #222, #444, #333, #444, #333); /* Opera 11.6 to 12.0 */
+    background: -moz-radial-gradient(circle, #222, #444, #333, #444, #333); /* Firefox 3.6 to 15 */
+    background: radial-gradient(circle, #222, #444, #333, #444, #333); /* Standard syntax */
+}.cymbal:before, .cymbal:after{
+    content: "";
+    display:block;
+    position:absolute;
+    border-radius:50%;
+}.cymbal:after{
+    width: 12.5%;
+    height: 12.5%;
+    background: black;
+    left:calc(50% - 12px - 12.5% / 2);
+    top:calc(50% - 12px - 12.5% / 2);
+    border: 12px solid white;
+    box-shadow: 0px -4px 6px rgb(235, 235, 235);
+}.cymbal:before{
+    width:100%;
+    height:100%;
+    background: white;
+    -webkit-clip-path: polygon(0% 0%, 100% 0%, 100% 70%, 50% 50%, 0% 70%);
+    -moz-clip-path: polygon(0% 0%, 100% 0%, 100% 70%, 50% 50%, 0% 70%);
+    clip-path: polygon(0% 0%, 100% 0%, 100% 70%, 50% 50%, 0% 70%);
+}
+
+
+#ride, #ridekeys{
+    left:76%;
+    width:24%;
+    padding-bottom:24%;
+    margin-top:8.5%;
+}#ride {
+    transform: rotate(45deg);
+}#bell{
+    display:block;
+    position:absolute;
+    border-radius:50%;
+    width:32%;
+    height:32%;
+    left:34%;
+    top:34%;
+}
+#crash, #crashkeys{
+    left:3.5%;
+    margin-top:8.5%;
+    width:24%;
+    padding-bottom:24%;
+}
+#crash{
+    transform:rotate(-45deg);
+    background: radial-gradient(circle, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333, #444, #333); /* Standard syntax */
+}
+#hihat, #hihatkeys{
+    margin-top:32%;
+    width:24%;
+    padding-bottom:24%;
+}
+#hihat{
+    transform:rotate(-45deg);
+}
+
+#snare, #snarekeys{
+    left:16%;
+    margin-top:28%;
+}
+#floor, #floorkeys{
+    left:64%;
+    margin-top:28%;
+}
+#left, #leftkeys{
+    left:28%;
+    margin-top:8%;
+}#right, #rightkeys{
+    left:52%;
+    margin-top:8%;
+}
+
+
+#bass{
+    width:34%;
+    padding-bottom:34%;
+    left:40%;
+    margin-top:24%;
+    box-shadow:inset 0px 0px 6px black, 0 0 6px black;
+    border-bottom: 3px solid white;
+    border-top: 3px solid white;
+
+    position: absolute;
+    background-color: white; /*color of the main-background*/
+    -webkit-clip-path: polygon(50% 100%, 100% 75%, 100% 25%, 50% 0%, 0% 25%, 0% 75%);
+    -moz-clip-path: polygon(50% 100%, 100% 75%, 100% 25%, 50% 0%, 0% 25%, 0% 75%);
+    clip-path: polygon(50% 100%, 100% 75%, 100% 25%, 50% 0%, 0% 25%, 0% 75%);
+    z-index:1;
+    width:23.5%;
+    padding-bottom:26.5%;
+    -webkit-transform: perspective(500px) rotateX(-30deg);
+    transform: perspective(500px) rotateX(-30deg);
+}#bass:after{
+    display: block;
+    content: "";
+    position: absolute;
+    --border-width: 8px;
+    width: calc(100% - 2 * var(--border-width));
+    height: calc(100% - 2 * var(--border-width));
+    top: var(--border-width);
+    left: var(--border-width);
+    -webkit-clip-path: polygon(50% 100%, 100% 75%, 100% 25%, 50% 0%, 0% 25%, 0% 75%);
+    -moz-clip-path: polygon(50% 100%, 100% 75%, 100% 25%, 50% 0%, 0% 25%, 0% 75%);
+    clip-path: polygon(50% 100%, 100% 75%, 100% 25%, 50% 0%, 0% 25%, 0% 75%);
+    z-index:2;
+    background: #333;
+}
+
+#pedal, #hihatpedal{
+    z-index:0;
+    border:6px solid black;
+    box-shadow: inset 0 0 12px black;
+    background:grey;
+    background-image: linear-gradient(rgba(0, 0, 0, .7) 50%, transparent 50%, transparent);
+    background-size: 5px 8px;
+    border-bottom:24px solid black;
+    border-radius: 12px;
+
+    -webkit-transform: perspective(500px) rotateX(-30deg);
+    transform: perspective(500px) rotateX(-30deg);
+}
+#pedal{
+    z-index:2
+}
+#pedal:before, #pedal:after{
+    content:"";
+    display:block;
+    position: absolute;
+}#pedal:before{
+    background:#cac9c9;
+    background: -webkit-linear-gradient(right, #cac9c9,grey);
+    width:9%;
+    left:45%;
+    padding-bottom:80%;
+    box-shadow: 6px 6px 10px black;
+    transition: height 25s;
+    top: -2.5%;
+}#pedal:after{
+    left:33%;
+    top:20%;
+    width:35%;
+    padding-bottom:55%;
+    background:#f7f7c2;
+    background: -webkit-linear-gradient(right, #f7f7c2,#d2cda2,#f7f7c2,#f7f7c2);
+    box-shadow: 6px 0px 10px black;
+    transition: all 0.1s;
+
+    -webkit-transform: perspective(300px) rotateX(60deg);
+    transform: perspective(300px) rotateX(60deg);
+}
+
+#pedal, #pedalkeys{
+    left:47.25%;
+    margin-top:47.5%;
+    width:8%;
+    padding-bottom:17%;
+}
+#hihatpedal, #hihatpedalkeys{
+    left:7.5%;
+    margin-top:43.5%;
+    width:8.5%;
+    padding-bottom:22%;
+}#hihatpedalkeys{
+    margin-top:55%;
+    padding-bottom:11%;
+}
+
+#pedal.clicked, #hihatpedal.clicked{
+    left:47.5%;
+    margin-top:46%;
+    width:7.5%;
+    border-bottom-width:16px;
+
+    -webkit-transform: perspective(300px) rotateX(0deg);
+    transform: perspective(300px) rotateX(0deg);
+}#pedal.clicked:before{
+    height:0;
+    width:0;
+    transition: height 0.1s;
+}#pedal.clicked:after{
+    left:22%;
+    top:-11%;
+    width:55%;
+    padding-bottom:55%;
+    background: -webkit-linear-gradient(right, #f7f7c2,#d2cda2,#f7f7c2,#f7f7c2);
+    box-shadow: 6px 0px 10px black;
+    border-radius:50%;
+    transition: all 0.1s;
+
+    -webkit-transform: perspective(300px) rotateX(0deg);
+    transform: perspective(300px) rotateX(0deg);
+}#hihatpedal.clicked{
+    left:8%;
+    margin-top:41%;
+}
+
+
+.keys{
+    position:absolute;
+    visibility:hidden;
+}
+.keys.hexagonal{
+    margin-left:11.75%;
+    padding-top:26%;
+}
+.key{
+    visibility:hidden;
+    width:23px;
+    height:25px;
+    position:absolute;
+    border:1px solid black;
+    border-radius:4px;
+    box-shadow: 2px 2px 0px #777;
+    background: white;
+    padding-left:2px;
+}.key:nth-child(1){
+    left:calc(50% - 26px);
+    top:calc(50% - 26px);
+}.key:nth-child(2){
+    left:calc(50% + 2px);
+    top:calc(50% - 26px);
+}.key:nth-child(3){
+    left:calc(50% - 26px);
+    top:calc(50% + 2px);
+}.key:nth-child(4){
+    left:calc(50% + 2px);
+    top:calc(50% + 2px);
+}
+.grey, .caps, .shift, .space, .extra{
+    background:#CCC;
+}.caps{
+    width:46px;
+}.key.shift{
+    left:calc(50% - 26px);
+    top:calc(50% + 2px);
+    width:56px;
+}.space{
+    top:calc(50% + 30px);
+    width:100px;
+    left:calc(50% - 51px);
+}.extra{
+    left:calc(50% + 30px);
+    top:calc(50% - 12px);
+}
