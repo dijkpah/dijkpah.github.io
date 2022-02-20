@@ -175,7 +175,7 @@
     left:45%;
     padding-bottom:80%;
     box-shadow: 6px 6px 10px black;
-    transition: height 25s;
+    transition: height 75ms;
     top: -2.5%;
 }#pedal:after{
     left:33%;
@@ -185,7 +185,7 @@
     background:#f7f7c2;
     background: -webkit-linear-gradient(right, #f7f7c2,#d2cda2,#f7f7c2,#f7f7c2);
     box-shadow: 6px 0px 10px black;
-    transition: all 0.1s;
+    transition: all 15ms;
 
     -webkit-transform: perspective(300px) rotateX(60deg);
     transform: perspective(300px) rotateX(60deg);
@@ -218,7 +218,7 @@
 }#pedal.clicked:before{
     height:0;
     width:0;
-    transition: height 0.1s;
+    transition: height 75ms;
 }#pedal.clicked:after{
     left:22%;
     top:-11%;
@@ -227,7 +227,7 @@
     background: -webkit-linear-gradient(right, #f7f7c2,#d2cda2,#f7f7c2,#f7f7c2);
     box-shadow: 6px 0px 10px black;
     border-radius:50%;
-    transition: all 0.1s;
+    transition: all 15ms;
 
     -webkit-transform: perspective(300px) rotateX(0deg);
     transform: perspective(300px) rotateX(0deg);
