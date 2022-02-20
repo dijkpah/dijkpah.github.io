@@ -10,10 +10,6 @@
     touch-action:none !important;
 
 }
-#content{
-	transform-style: preserve-3d;
-	-webkit-transform-style: preserve-3d;
-}
 
 .tom, .cymbal, #bass, #pedal, #hihatpedal{
     position:absolute;
