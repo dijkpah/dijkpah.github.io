@@ -2,67 +2,118 @@
     box-sizing: border-box;
 }
 
+:root {
+    --music-color: rgb(255,133,0);
+    --games-color: #3399FF;
+    --other-color: #23b32f;
+}
+
 body {
     width: 100%;
     height: 100%;
     background: #EEE;
+    display: grid;
+    grid-template-areas:
+        "header header header"
+        ". . ."
+        ". categories ."
+        ". . ."
+        ". projects ."
+        ". . ."
+        "footer footer footer"   
+    ;
+    grid-template-columns: auto minmax(0, 900px) auto;
+    grid-template-rows: 80px 35px 80px 35px auto 35px 80px;
 }
 
-.content {
+#header {
+    background-color: #111;
+    background-image: url(../img/header.png);
+    height: 80px;
+    grid-area: header;
+    width: 100%;
+}
+
+#categories {
+    grid-area: categories;
+    height: 80px;
+    display: grid;
+    grid-template-areas: ". music games other .";
+    grid-template-columns: 70px 1fr 1fr 1fr 70px;
+    gap: 2px;
+}
+#categories .category {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    height: 100%;
+    background: white;
+    font-size: 32px;
+    font-family: Coolvetica;
+    cursor: pointer;
+    box-shadow: grey 1px 2px 7px 0px;
+    border-radius: 8px;
+}
+#categories .category.music {
+    grid-area: music;
+    color: var(--music-color);
+}#categories .category.music.active {
+    color: white;
+    background: var(--music-color);
+}
+#categories .category.games {
+    grid-area: games;
+    color: var(--games-color);
+}#categories .category.games.active {
+    color: white;
+    background: var(--games-color);
+}
+#categories .category.other {
+    grid-area: other;
+    color: var(--other-color);
+}#categories .category.other.active {
+    color: white;
+    background: var(--other-color);
 }
 
-.content .projects {
+#projects {
+    grid-area: projects;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
-    max-width: 900px;
     gap: 40px;
-    padding: 40px 40px 20px 40px;
-    background: white;
-    box-shadow: grey 1px 1px 5px 0px;
-    margin-bottom: 40px;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;;
+    padding: 0px 40px 20px 40px;
 }
 
 /* Include placeholders to align last row to grid */
-.content .projects .placeholder,
-.content .projects .project {
+#projects .placeholder,
+#projects .project {
     flex-shrink: 0;
     flex-grow: 0;
     width: 200px;
     height: 0px;
-    position: relative;
+    position: relative;n
 }
-.content .projects .project {
-    --tile-radius: 36px;
+#projects .project {
     height: 220px;
-    border-radius: var(--tile-radius);
-    box-shadow: black 1px 2px 7px 0px;
+    border: 12px solid white;
+    box-shadow: grey 1px 2px 7px 0px;
     overflow: hidden;
     filter: grayscale(1);
+    border-radius: 20px;
 }
-.content .projects .project:hover {
+#projects .project:hover {
     cursor: pointer;
     filter: grayscale(0);
 }
 
-.content .projects .project img {
-    border: 1.5px solid black;
+#projects .project img {
     max-width: 200px;
+    width: 100%;
     border-top-left-radius: var(--tile-radius);
     border-top-right-radius: var(--tile-radius);
 }
-.content .projects .project:hover img {
-    border-color: rgb(255,133,0);
-}
 
-.content .projects .project .title {
+#projects .project .title {
     position: absolute;
     bottom: 0;
     display: flex;
@@ -70,12 +121,11 @@ body {
     align-items: center;
     height: 40px;
     width: 100%;
-    background: #333;
-    color: white;
+    background: white;
+    color: #222;
     font-size: 28px;
     font-family: Coolvetica;
 }
-.content .projects .project:hover .title {
-    background: rgb(255,133,0);
-    text-shadow: rgba(0,0,0,0.5) 1px 1px 1px;
+#projects .project:hover .title {
+    color: rgb(255,133,0);
 }
