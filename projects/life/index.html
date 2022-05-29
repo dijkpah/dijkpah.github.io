@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+    <title>Game of Life</title>
+    <link type="text/css" rel="stylesheet" href="../../webroot/fonts/open-sans/style.css">
+	<link type="text/css" rel="stylesheet" href="webroot/css/style.css">
+    <script src="../../webroot/libs/jquery-1.x.x.min.js" ></script>
+    <script src="webroot/js/script.js"></script>
+</head>
+<body>
+<div id="container">
+    <canvas id="canvas">Your browser does not support the HTML5 canvas tag.</canvas>
+    <div id="config">
+        Neighbours needed to:
+        <div class="config">
+                Reproduce
+                <label class="container">0 <input type="checkbox" id="b0"><span class="checkmark"></span></label>
+                <label class="container">1 <input type="checkbox" id="b1"><span class="checkmark"></span></label>
+                <label class="container">2 <input type="checkbox" id="b2"><span class="checkmark"></span></label>
+                <label class="container">3 <input type="checkbox" id="b3" checked=checked><span class="checkmark"></span></label>
+                <label class="container">4 <input type="checkbox" id="b4"><span class="checkmark"></span></label>
+                <label class="container">5 <input type="checkbox" id="b5"><span class="checkmark"></span></label>
+                <label class="container">6 <input type="checkbox" id="b6"><span class="checkmark"></span></label>
+                <label class="container">7 <input type="checkbox" id="b7"><span class="checkmark"></span></label>
+                <label class="container">8 <input type="checkbox" id="b8"><span class="checkmark"></span></label>
+        </div>
+        <div class="config">
+                Survive
+                <label class="container">0 <input type="checkbox" id="s0"><span class="checkmark"></span></label>
+                <label class="container">1 <input type="checkbox" id="s1"><span class="checkmark"></span></label>
+                <label class="container">2 <input type="checkbox" id="s2" checked=checked><span class="checkmark"></span></label>
+                <label class="container">3 <input type="checkbox" id="s3" checked=checked><span class="checkmark"></span></label>
+                <label class="container">4 <input type="checkbox" id="s4"><span class="checkmark"></span></label>
+                <label class="container">5 <input type="checkbox" id="s5"><span class="checkmark"></span></label>
+                <label class="container">6 <input type="checkbox" id="s6"><span class="checkmark"></span></label>
+                <label class="container">7 <input type="checkbox" id="s7"><span class="checkmark"></span></label>
+                <label class="container">8 <input type="checkbox" id="s8"><span class="checkmark"></span></label>
+        </div>
+        <div class="config">
+            <button id="restart">Restart</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>
