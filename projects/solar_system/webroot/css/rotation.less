@@ -1,0 +1,120 @@
+/*-------------------------------- MIXINS ------------------------------------*/
+.planet(@size, @img){
+	@root: '../img/planets_gif/';
+	@url: "@{root}@{img}";
+	background-size:@size;
+	background-image:url(@url);
+}
+
+@min_width : 900px;
+
+/*-------------------------------- STYLING------------------------------------*/
+
+#rotation{
+	position: absolute;
+	top:700px;
+	width:100%;
+	min-width:900px;
+	background: white;
+	padding:36px 0px;
+	/*background-size: 100% 100%;*/
+}
+#rotation h1{
+	color:black;
+}
+#rotation .content{
+	background-color:white;
+}
+/*-------------------------------- POP-UPS ----------------------------------*/
+
+#rotation .popup-info {
+	width: 179px;
+	color: white;
+	text-align: center;
+	padding: 1rem;
+	max-height: 0;
+	position: absolute;
+	top: 25px;
+	left: 0;
+	transition: 0.3s;
+	overflow: hidden;
+}#rotation .popup-info .popup-icon {
+    position: absolute;
+    top: 0;
+    right: 55px;
+    opacity: 1;
+    width: 13px;
+    transition: 0.3s;
+	cursor:pointer;
+}
+#rotation .popup-info p {
+    display: none;
+	height:94px;
+}
+#rotation .popup-info.open {
+    background: #888;
+    position: absolute;
+    max-height: 300px;
+	padding:70px 0px 15px 0px;
+	margin-top:-142px;
+    z-index: 1;
+}#rotation .popup-info.open .popup-icon {
+    top: 15px;
+    right: 69px;
+    width: 40px;
+}
+#rotation .popup-info.open p {
+    display: block;
+	padding:0px 15px;
+}
+
+/*--------------------------- CELESTIAL BODIES ------------------------------*/
+
+#rotation .sphere{
+	background-position:center;
+    border-radius: 50%;
+	height:85px;
+	width:85px;
+	float:left;
+	margin:43px;
+	border: 4px solid black;
+
+	box-shadow: inset -18px 0px 10px rgba(0, 0, 0, 0.5);
+}#rotation .sphere label{
+	display:block;
+	position:relative;
+	top:100px;
+	width:185px;
+	margin-left:-50px;
+}
+
+#rotation .sun {
+	.planet(87px,'sun.gif');
+    box-shadow: 0 0 28px red;
+}
+#rotation .mercury{
+	.planet(88px,'mercury.gif');
+}
+#rotation .venus{
+	.planet(98px,'venus.gif');
+}
+#rotation .earth {
+	.planet(86px,'earth.gif');
+}#rotation .moon {
+	.planet(86px,'moon.gif');
+}
+#rotation .mars{
+	.planet(93px,'mars.gif');
+}
+#rotation .jupiter{
+	.planet(96px,'jupiter.gif');
+}
+#rotation .saturn{
+	.planet(102px,'saturn.gif');
+}
+#rotation .uranus{
+	.planet(110px,'uranus.gif');
+}
+#rotation .neptune{
+	.planet(90px,'neptune.gif');
+}

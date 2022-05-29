@@ -1,0 +1,273 @@
+/*-------------------------------- MIXINS ------------------------------------*/
+
+@-webkit-keyframes spin-left{
+	100%{
+		-webkit-transform: rotate(-360deg);
+		   -moz-transform: rotate(-360deg);
+	    	-ms-transform: rotate(-360deg);
+			 -o-transform: rotate(-360deg);
+		        transform: rotate(-360deg);
+	}
+}
+@-moz-keyframes spin-left{
+	100%{
+		-webkit-transform: rotate(-360deg);
+	       -moz-transform: rotate(-360deg);
+		    -ms-transform: rotate(-360deg);
+		     -o-transform: rotate(-360deg);
+		        transform: rotate(-360deg);
+	}
+}
+.rotate (@time) {
+	-webkit-animation: spin-left @time linear infinite;
+	   -moz-animation: spin-left @time linear infinite;
+		-ms-animation: spin-left @time linear infinite;
+        	animation: spin-left @time linear infinite;
+}
+.orbit (@size) {
+	width: @size;
+	height: @size;
+	margin-top: -(@size/2);
+	margin-left: -(@size/2);
+}
+.planet(@color, @img){
+	background-color:@color;
+	background-image:url(@img);
+}
+
+@min_width : 900px;
+
+/*-------------------------------- STYLING------------------------------------*/
+
+*{
+	margin:0;
+	padding:0;
+	font:inherit;
+}
+
+@font-face {
+    font-family: 'avenger';
+    src: url('../fonts/avenger/avengeance_mightiest_avenger-webfont.eot');
+    src: url('../fonts/avenger/avengeance_mightiest_avenger-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/avenger/avengeance_mightiest_avenger-webfont.woff') format('woff'),
+         url('../fonts/avenger/avengeance_mightiest_avenger-webfont.ttf') format('truetype'),
+         url('../fonts/avenger/avengeance_mightiest_avenger-webfont.svg#avengeance_mightiest_avengeRg') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans'), local('OpenSans'), url(http://themes.googleusercontent.com/static/fonts/opensans/v6/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff) format('woff');
+}
+
+h1, h2, h3{
+	font-family: 'avenger';
+	color: white;
+}
+h1{
+	font-size:64px;
+}
+body {
+    background-color: black;
+	min-width:@min_width;
+    width: 100%;
+    height: 100%;
+	text-align:center;
+	font-family: 'Open Sans';
+	margin-top:25px;
+}
+.content{
+	width:@min_width;
+	min-width:@min_width;
+	margin:0 auto;
+}
+#animation{
+	min-width:@min_width;
+    width: 100%;
+    height: 600px;
+	position:absolute;
+	top:100px;
+	background:rgb(22,4,113);
+	background-image: url('../img/bg/starry.png');
+	background-size: 100% auto;
+}
+
+/*--------------------------- CELESTIAL BODIES ------------------------------*/
+
+#animation{
+	.sphere{
+	    top: 0;
+	    left: 50%;
+		position:absolute;
+		background-position:center;
+	    border-radius: 50%;
+	    height: 20px;
+	    width: 20px;
+	    margin-left: -10px;
+	    margin-top: -10px;
+		background-size: 20px;
+
+		box-shadow:inset 0px 6px 6px rgba(0, 0, 0, 0.8);
+	}
+	.sun{
+	    top: 50%;
+
+		.orbit(90px);
+		.planet(rgb(219,59,3), '../img/planets_gif/sun.gif');
+
+		background-size: 90px;
+	    box-shadow: 0 0 128px red;
+	}
+	.mercury{
+		.planet(rgb(224,183,160), '../img/planets/mercury.gif');
+	}
+	.venus{
+		.planet(rgb(236,122,27),'../img/planets/venus.gif');
+	}
+	.earth{
+		.planet(rgb(91,108,138),'../img/planets/earth_top.jpg');
+	}.moon{
+		top: 50%;
+		left:-6%;
+
+		.orbit(5px);
+		box-shadow:none;
+
+		.planet(rgb(129,124,130),'../img/planets/moon.jpg');
+		background-size: 10px;
+	}
+	.mars{
+		.planet(rgb(228,125,84),'../img/planets/mars.gif');
+	}
+	.jupiter{
+		.planet(rgb(167,91,76),'../img/planets/jupiter.gif');
+	}
+	.saturn .sphere{
+		.planet(rgb(232,216,193),'../img/planets/saturn.gif');
+	    height: 16px;
+	    width: 16px;
+		top:12px;
+		left:12px;
+	}.saturn.ring, .saturn.ring:after{
+	    top: 0;
+	    left: 50%;
+		position:absolute;
+		border-radius:50%;
+	}.saturn.ring{
+		height:20px;
+		margin-top:-15px;
+		margin-left:-15px;
+		width:20px;
+		border:4px solid rgba(160, 147, 130, 0.7);
+	}.saturn.ring:after{
+		height:30px;
+		width:30px;
+		margin-left:-16px;
+		margin-top:-6px;
+		border:1px solid rgba(160, 147, 130, 0.5);
+		content:'';
+	}
+	.uranus{
+		.planet(rgb(0,224,224),'../img/planets/uranus.gif');
+	}
+	.neptune{
+		.planet(rgb(99,145,215),'../img/planets/neptune.gif');
+	}
+/*--------------------------- CELESTIAL BODIES TURN TIMES -------------------*/
+
+	.sun{
+	   .rotate(1s);
+	}
+}
+/*--------------------------- ORBIT SIZES -----------------------------------*/
+
+[class$="-orbit"],
+[class*="-orbit "]{
+	border: 1px solid white;
+	border-color: rgba(255,255,255,0.2);
+    border-radius: 50%;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+[class$="-orbit"]:hover,
+[class*="-orbit "]:hover,
+[class$="-orbit"]:hover .sphere,
+.sun.sphere:hover{
+	border: 2px solid orange;
+}
+#animation{
+	[class$="-orbit"]:hover .sphere,
+	[class*="-orbit "]:hover .sphere{
+	    margin-left: -12px;
+	    margin-top: -12px;
+	}.earth-orbit:hover .moon{
+		margin:-4px 0px 0px -4px;
+	}.earth-orbit:hover .moon-orbit{
+		margin-top:-16px;
+		margin-left:-16px;
+		border: 2px solid orange;
+	}.mercury-orbit{
+		.orbit(150px);
+	}.venus-orbit{
+	    .orbit(210px);
+	}.earth-orbit{
+	    .orbit(270px);
+	}.moon-orbit{
+	   .orbit(28px);
+		margin-top:-15px;
+		margin-left:-15px;
+	}.mars-orbit{
+	   .orbit(330px);
+	}.jupiter-orbit{
+	    .orbit(390px);
+	}.saturn-orbit {
+	    .orbit(450px);
+	}.uranus-orbit {
+	    .orbit(510px);
+	}.neptune-orbit {
+	    .orbit(570px);
+	}
+}
+/*--------------------------- BEGIN POSITIONS -------------------------------*/
+#animation [class$="-orbit"] span,
+#animation [class*="-orbit "] span{
+	width:100%;
+	height:100%;
+	display:block;
+	border-radius:50%;
+}
+/*--------------------------- ORBIT TIMES -----------------------------------*/
+.mercury-orbit{
+    .rotate(3.034s);
+}
+.venus-orbit{
+    .rotate(7.748s);
+}
+.earth-orbit{
+    .rotate(12.595s);
+}.moon-orbit{
+	.rotate(931ms);
+}
+.mars-orbit{
+	.rotate(23.690s);
+}
+.jupiter-orbit{
+    .rotate(149.375s);
+}
+.saturn-orbit{
+    .rotate(371.044s);
+}
+.uranus-orbit{
+	.rotate(1058.847s);
+}
+.neptune-orbit{
+    .rotate(2075.628s);
+}
+
+
+/**http://neography.com/experiment/circles/solarsystem/**/
+/**http://lab.la-grange.ca/en/building-jsorrery-a-javascript-webgl-solar-system**/
+/**http://codepen.io/juliangarnier/pen/idhuG**/

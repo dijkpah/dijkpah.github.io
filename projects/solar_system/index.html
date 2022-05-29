@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+    <head>
+        <link rel="stylesheet/less" type="text/css" href="webroot/css/style.less" />
+        <link rel="stylesheet/less" type="text/css" href="webroot/css/rotation.less" />
+        <link rel="stylesheet/less" type="text/css" href="webroot/css/angle.less" />
+		<script type='text/javascript' src="../../webroot/libs/jquery-1.x.x.min.js" ></script>
+		<script type='text/javascript' src="../../webroot/libs/less-1.x.x.min.js" ></script>
+		<script>
+		$(document).ready(function(){
+			$(".popup-info").on("click", function() {
+			  $(this).toggleClass("open");
+			  return false;
+			});
+		});
+		</script>
+    </head>
+    <body>
+	<h1>The Solar System</h1>
+	<a href="#orbit"></a>
+	<div id="animation">
+		<div class="content">
+			<div class="neptune-orbit" title="Neptune">
+				<span><div class="neptune sphere"></div></span>
+			</div>
+			<div class="uranus-orbit" title="Uranus">
+				<span><div class="uranus sphere"></div></span>
+			</div>
+			<div class="saturn-orbit" title="Saturn">
+				<span><div class="saturn ring">
+					<div class="sphere"></div>
+				</div></span>
+			</div>
+			<div class="jupiter-orbit" title="Jupiter">
+				<span><div class="jupiter sphere"></div></span>
+			</div>
+			<div class="mars-orbit" title="Mars">
+				<span><div class="mars sphere"></div></span>
+			</div>
+			<div class="earth-orbit" title="Earth">
+				<span><div class="earth sphere">
+					<div class="moon-orbit">
+						<span><div class="moon sphere"></div></span>
+					</div>
+				</div></span>
+			</div>
+			<div class="venus-orbit" title="Venus">
+				<span><div class="venus sphere"></div></span>
+			</div>
+			<div class="mercury-orbit" title="Mercury">
+				<span><div class="mercury sphere"></div></span>
+			</div>
+			<div class="sun sphere" title="Sun"></div></span>
+        </div>
+	</div>
+	<a href="#rotation"></a>
+	<div id="rotation">
+		<div class="content">
+		<h1>Rotation Period</h1>
+			<div class="sun sphere" 	><label>Sun<br/>	25-35 days
+				<div class="popup-info">
+					<img src="webroot/img/icons/asterisk.svg" class="popup-icon">
+					<p>Stars turn faster around their equator</p>
+				</div>
+			</label></div>
+			<div class="mercury sphere"	><label>Mercury<br/>60 days</label></div>
+			<div class="venus sphere"	><label>Venus<br/>	243 days</label></div>
+			<div class="earth sphere"	><label>Earth<br/>	24 hours</label></div>
+			<div class="moon sphere"	><label>Moon<br/>	27 days</label></div>
+		</div>
+		<div class="spacer"></div>
+		<div class="content">
+			<div class="mars sphere" 	><label>Mars<br/>	24 hours</label></div>
+			<div class="jupiter sphere" ><label>Jupiter<br/>10-11 hours
+				<div class="popup-info">
+					<img src="webroot/img/icons/asterisk.svg" class="popup-icon">
+					<p>Gas planets turn faster around their equator</p>
+				</div>
+			</label></div>
+			<div class="saturn sphere" 	><label>Saturn<br/>	10 hours</label></div>
+			<div class="uranus sphere" 	><label>Uranus<br/>	17 hours</label></div>
+			<div class="neptune sphere" ><label>Neptune<br/>16 hours</label></div>
+			<br/>
+			<br/>
+		</div>
+	</div>
+	<a href="#tilt"></a>
+	<div id="angle">
+		<div class="content">
+		<h1>Axial Tilt</h1>
+			<div class="sun planet"		><div class="tilt sphere"><div class="lineTop"></div><div class="lineBottom"></div></div><label>Sun<br/>	7.25 &deg;</label></div>
+			<div class="mercury planet" ><div class="tilt sphere"><div class="lineTop"></div><div class="lineBottom"></div></div><label>Mercury<br/>0 &deg;</label></div>
+			<div class="venus planet" 	><div class="tilt sphere"><div class="lineTop"></div><div class="lineBottom"></div></div><label>Venus<br/>	177.36 &deg;</label></div>
+			<div class="earth planet" 	><div class="tilt sphere"><div class="lineTop"></div><div class="lineBottom"></div></div><label>Earth<br/>	23.4 &deg;</label></div>
+			<div class="moon planet" 	><div class="tilt sphere"><div class="lineTop"></div><div class="lineBottom"></div></div><label>Moon<br/>	6.68 &deg;</label></div>
+		</div>
+		<div class="spacer"></div>
+		<div class="content">
+			<div class="mars planet" 	><div class="tilt sphere"><div class="lineTop"></div><div class="lineBottom"></div></div><label>Mars<br/>	25.19 &deg;</label></div>
+			<div class="jupiter planet" ><div class="tilt sphere"><div class="lineTop"></div><div class="lineBottom"></div></div><label>Jupiter<br/>3.13 &deg;</label></div>
+			<div class="saturn planet" 	><div class="tilt sphere"><div class="lineTop"></div><div class="lineBottom"></div></div><label>Saturn<br/>	26.73 &deg;</label></div>
+			<div class="uranus planet" 	><div class="tilt sphere"><div class="lineTop"></div><div class="lineBottom"></div></div><label>Uranus<br/>	97.77 &deg;</label></div>
+			<div class="neptune planet" ><div class="tilt sphere"><div class="lineTop"></div><div class="lineBottom"></div></div><label>Neptune<br/>28.32 &deg;</label></div>
+			<br/>
+			<br/>
+		</div>
+	</div>
+    </body>
+</html>
