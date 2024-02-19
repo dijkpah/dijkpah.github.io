@@ -3,6 +3,7 @@
  ******************************************************************************/
 
 const CANVAS_ELEM = document.getElementById('canvas')! as HTMLCanvasElement
+const CANVAS_ELEM_MAX_WIDTH = 800;
 const CANVAS_CONTEXT = CANVAS_ELEM.getContext('2d')!;
 
 const INIT_IMAGE_DATA = CANVAS_CONTEXT.createImageData(CANVAS_ELEM.width, CANVAS_ELEM.height);
@@ -107,6 +108,8 @@ function render(): void {
     const mapHeightPeriod = map.height - 1;
     
     const screenWidth = CANVAS_ELEM.width;
+    const scaleHeight = 0.3 * screenWidth;
+    
     const sinAngle = Math.sin(camera.angle);
     const cosAngle = Math.cos(camera.angle);
     
@@ -114,7 +117,7 @@ function render(): void {
     for(let x=0; x < screenWidth; x++) {
         hiddenY[x] = CANVAS_ELEM.height;
     }
-    
+
     // Draw from front to back
     for(let z=1, deltaZ=1; z<camera.distance; z+=deltaZ) {
         // 90 degree field of view
@@ -128,7 +131,7 @@ function render(): void {
         plx += camera.x;
         ply += camera.y;
 
-        const invZ = 240 / z;
+        const invZ = scaleHeight / z;
         const buf32 = screenData.buf32;
         
         for(let x=0; x < screenWidth; x++) {
@@ -325,13 +328,18 @@ function onKeyUp(e: KeyboardEvent): boolean | void {
     return false;
 }
 
-function onResize(): void {    
-    // enforce max width of 800
-    CANVAS_ELEM.width = window.innerWidth < 800 ? window.innerWidth : 800;
-    
-    // resize maintaining aspect ratio
-    const aspect = window.innerWidth / window.innerHeight;
-    CANVAS_ELEM.height = CANVAS_ELEM.width / aspect;
+function onResize(): void {
+    const ratio = window.innerWidth / window.innerHeight;
+    const maxWidth = CANVAS_ELEM_MAX_WIDTH;
+    const maxHeight = maxWidth / ratio;
+
+    if(window.innerWidth > maxWidth || window.innerHeight > maxHeight) {
+        CANVAS_ELEM.width = maxWidth;
+        CANVAS_ELEM.height = maxWidth / ratio;
+    } else {
+        CANVAS_ELEM.width = window.innerWidth;
+        CANVAS_ELEM.height = window.innerHeight;
+    }
 
     screenData.imagedata = CANVAS_CONTEXT.createImageData(CANVAS_ELEM.width, CANVAS_ELEM.height);
     
