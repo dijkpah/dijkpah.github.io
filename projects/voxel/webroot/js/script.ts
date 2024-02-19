@@ -70,9 +70,7 @@ const input = {
     lookup:          false,
     lookdown:        false,
     mouseposition:   null as null | [number, number],
-    keyPressed:      false
 }
-let drawingFrame = false;
 let time = new Date().getTime();
 
 // for fps display
@@ -172,18 +170,11 @@ function render(): void {
 
 /** Draws the next frame */
 function draw(): void {
-    drawingFrame = true;
     updateCamera();
     drawBackground();
     render();
     flip();
     frameCount++;
-    
-    // if (!input.keypressed) {
-    //     drawingFrame = false;
-    // } else {
-    //     window.requestAnimationFrame(draw);
-    // }
     window.requestAnimationFrame(draw);
 }
 
@@ -192,27 +183,21 @@ function updateCamera(): void {
     const current = new Date().getTime();
     const delta = (current - time) * camera.speed;
     
-    input.keyPressed = false;
     if (input.leftRight != 0) {
         camera.angle += input.leftRight * delta;
-        input.keyPressed = true;
     }
     if (input.forwardBackward != 0) {
         camera.x -= input.forwardBackward * Math.sin(camera.angle) * delta;
         camera.y -= input.forwardBackward * Math.cos(camera.angle) * delta;
-        input.keyPressed = true;
     }
     if (input.upDown != 0) {
         camera.height += input.upDown * delta;
-        input.keyPressed = true;
     }
     if (input.lookup) {
         camera.horizon += KEY_PITCH_SPEED * delta;
-        input.keyPressed = true;
     }
     if (input.lookdown) {
         camera.horizon -= KEY_PITCH_SPEED * delta;
-        input.keyPressed = true;
     }
     
     // Collision detection. Don't fly below the surface.
@@ -246,10 +231,6 @@ function onMouseDown(e: MouseEvent | TouchEvent): void {
     input.forwardBackward = MOUSE_FORWARD_SPEED;
     input.mouseposition = getMousePosition(e);
     time = new Date().getTime();
-    
-    if (!drawingFrame) {
-        draw();
-    }
 }
 
 function onMouseUp(): void {
@@ -312,10 +293,6 @@ function onKeyDown(e: KeyboardEvent): boolean | void {
             return;
     }
     
-    if (!drawingFrame) {
-        time = new Date().getTime();
-        draw();
-    }
     return false;
 }
 

@@ -8,7 +8,7 @@ const INIT_IMAGE_DATA = CANVAS_CONTEXT.createImageData(CANVAS_ELEM.width, CANVAS
 const INIT_BUFF_ARR = new ArrayBuffer(INIT_IMAGE_DATA.width * INIT_IMAGE_DATA.height * 4);
 const BACKGROUND_COLOR = "#9090E0";
 // Controls --------------------------------------------------------------------
-const INIT_HORIZON = 200;
+const HORIZON_HORIZONTAL = 100;
 const MOUSE_FORWARD_SPEED = 3;
 const MOUSE_PITCH_SPEED = 500;
 const MOUSE_LEFTRIGHT_SPEED = .2;
@@ -26,7 +26,7 @@ const camera = {
     y: 800, // y position on the map
     height: 78, // height of the camera
     angle: 0, // direction of the camera
-    horizon: INIT_HORIZON, // horizon position (look up and down)
+    horizon: HORIZON_HORIZONTAL, // horizon position (look up and down)
     distance: 800, // draw distance of map
     speed: 0.03 // camera movement speed 
 };
@@ -53,9 +53,7 @@ const input = {
     lookup: false,
     lookdown: false,
     mouseposition: null,
-    keyPressed: false
 };
-let drawingFrame = false;
 let time = new Date().getTime();
 // for fps display
 let timelastframe = new Date().getTime();
@@ -136,44 +134,32 @@ function render() {
 }
 /** Draws the next frame */
 function draw() {
-    drawingFrame = true;
     updateCamera();
     drawBackground();
     render();
     flip();
     frameCount++;
-    // if (!input.keypressed) {
-    //     drawingFrame = false;
-    // } else {
-    //     window.requestAnimationFrame(draw);
-    // }
     window.requestAnimationFrame(draw);
 }
 /** Update the camera for next frame. Dependent on keypresses */
 function updateCamera() {
     const current = new Date().getTime();
     const delta = (current - time) * camera.speed;
-    input.keyPressed = false;
     if (input.leftRight != 0) {
         camera.angle += input.leftRight * delta;
-        input.keyPressed = true;
     }
     if (input.forwardBackward != 0) {
         camera.x -= input.forwardBackward * Math.sin(camera.angle) * delta;
         camera.y -= input.forwardBackward * Math.cos(camera.angle) * delta;
-        input.keyPressed = true;
     }
     if (input.upDown != 0) {
         camera.height += input.upDown * delta;
-        input.keyPressed = true;
     }
     if (input.lookup) {
         camera.horizon += KEY_PITCH_SPEED * delta;
-        input.keyPressed = true;
     }
     if (input.lookdown) {
         camera.horizon -= KEY_PITCH_SPEED * delta;
-        input.keyPressed = true;
     }
     // Collision detection. Don't fly below the surface.
     const mapoffset = ((Math.floor(camera.y) & (map.width - 1)) << map.shift) + (Math.floor(camera.x) & (map.height - 1));
@@ -201,9 +187,6 @@ function onMouseDown(e) {
     input.forwardBackward = MOUSE_FORWARD_SPEED;
     input.mouseposition = getMousePosition(e);
     time = new Date().getTime();
-    if (!drawingFrame) {
-        draw();
-    }
 }
 function onMouseUp() {
     input.mouseposition = null;
@@ -223,7 +206,7 @@ function onMouseMove(e) {
     const deltaX = (input.mouseposition[0] - currentMousePosition[0]) / window.innerWidth;
     const deltaY = (input.mouseposition[1] - currentMousePosition[1]) / window.innerHeight;
     input.leftRight = deltaX * MOUSE_LEFTRIGHT_SPEED;
-    camera.horizon = INIT_HORIZON + deltaY * MOUSE_PITCH_SPEED;
+    camera.horizon = HORIZON_HORIZONTAL + deltaY * MOUSE_PITCH_SPEED;
     input.upDown = deltaY * MOUSE_UPDOWN_SPEED;
 }
 function onKeyDown(e) {
@@ -258,10 +241,6 @@ function onKeyDown(e) {
             break;
         default:
             return;
-    }
-    if (!drawingFrame) {
-        time = new Date().getTime();
-        draw();
     }
     return false;
 }
