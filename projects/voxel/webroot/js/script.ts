@@ -161,7 +161,8 @@ function render(): void {
             plx += dx;
             ply += dy;
         }
-        deltaZ += 0.005;
+        // Reduce level of detail further from camera
+        deltaZ *= 1.0025;
     }
 }
 
