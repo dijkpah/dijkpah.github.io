@@ -27,7 +27,7 @@ const camera = {
     height: 78, // height of the camera
     angle: 0, // direction of the camera
     horizon: HORIZON_HORIZONTAL, // horizon position (look up and down)
-    distance: 800, // draw distance of map
+    distance: 2000, // draw distance of map
     speed: 0.03 // camera movement speed 
 };
 // Landscape data --------------------------------------------------------------
@@ -50,8 +50,7 @@ const input = {
     forwardBackward: 0,
     leftRight: 0,
     upDown: 0,
-    lookup: false,
-    lookdown: false,
+    pitch: 0,
     mouseposition: null,
 };
 let time = new Date().getTime();
@@ -62,10 +61,8 @@ let frameCount = 0;
  * Helper functions
  ******************************************************************************/
 function hexColorToUInt8(color) {
-    const r = color.substring(1, 3);
-    const g = color.substring(3, 5);
-    const b = color.substring(5, 7);
-    return parseInt(`0xFF${b}${g}${r}`, 16);
+    const [_hash, r1, r2, g1, g2, b1, b2] = color;
+    return parseInt(`0xFF${b1}${b2}${g1}${g2}${r1}${r2}`, 16);
 }
 /*******************************************************************************
  * Rendering functions
@@ -90,7 +87,7 @@ function render() {
     const sinAngle = Math.sin(camera.angle);
     const cosAngle = Math.cos(camera.angle);
     const hiddenY = new Int32Array(screenWidth);
-    for (let x = 0; x < CANVAS_ELEM.width; x++) {
+    for (let x = 0; x < screenWidth; x++) {
         hiddenY[x] = CANVAS_ELEM.height;
     }
     // Draw from front to back
@@ -100,36 +97,34 @@ function render() {
         let ply = sinAngle * z - cosAngle * z;
         const prx = cosAngle * z - sinAngle * z;
         const pry = -sinAngle * z - cosAngle * z;
-        const dx = (prx - plx) / screenWidth;
-        const dy = (pry - ply) / screenWidth;
+        const deltaX = (prx - plx) / screenWidth;
+        const deltaY = (pry - ply) / screenWidth;
         plx += camera.x;
         ply += camera.y;
-        const invz = 240 / z;
+        const invZ = 240 / z;
         const buf32 = screenData.buf32;
         for (let x = 0; x < screenWidth; x++) {
             const mapOffset = ((Math.floor(ply) & mapWidthPeriod) << map.shift) + (Math.floor(plx) & mapHeightPeriod);
-            const heightOnScreen = (camera.height - map.altitude[mapOffset]) * invz + camera.horizon;
-            let ytop = heightOnScreen | 0;
-            const ybottom = hiddenY[x];
+            const heightOnScreen = (camera.height - map.altitude[mapOffset]) * invZ + camera.horizon;
+            const yTop = Math.max(heightOnScreen | 0, 0);
+            const yBottom = hiddenY[x];
             // Draw vertical line
-            if (ytop <= ybottom) {
-                if (ytop < 0) {
-                    ytop = 0;
-                }
+            if (yTop <= yBottom) {
                 // get offset on screen for the vertical line
-                let offset = ((ytop * screenWidth) + x);
-                for (let k = ytop; k < ybottom; k++) {
+                let offset = ((yTop * screenWidth) + x);
+                for (let k = yTop; k < yBottom; k++) {
                     buf32[offset] = map.color[mapOffset];
                     offset = offset + screenWidth;
                 }
             }
-            if (heightOnScreen < ybottom) {
+            if (heightOnScreen < yBottom) {
                 hiddenY[x] = heightOnScreen;
             }
-            plx += dx;
-            ply += dy;
+            plx += deltaX;
+            ply += deltaY;
         }
-        deltaZ += 0.005;
+        // Reduce level of detail further from camera
+        deltaZ *= 1.0025;
     }
 }
 /** Draws the next frame */
@@ -155,11 +150,8 @@ function updateCamera() {
     if (input.upDown != 0) {
         camera.height += input.upDown * delta;
     }
-    if (input.lookup) {
-        camera.horizon += KEY_PITCH_SPEED * delta;
-    }
-    if (input.lookdown) {
-        camera.horizon -= KEY_PITCH_SPEED * delta;
+    if (input.pitch) {
+        camera.horizon += input.pitch * delta;
     }
     // Collision detection. Don't fly below the surface.
     const mapoffset = ((Math.floor(camera.y) & (map.width - 1)) << map.shift) + (Math.floor(camera.x) & (map.height - 1));
@@ -184,6 +176,11 @@ function getMousePosition(e) {
     }
 }
 function onMouseDown(e) {
+    if ("button" in e) {
+        if (e.button !== 0) {
+            return;
+        }
+    }
     input.forwardBackward = MOUSE_FORWARD_SPEED;
     input.mouseposition = getMousePosition(e);
 }
@@ -233,10 +230,10 @@ function onKeyDown(e) {
             input.upDown = -KEY_UPDOWN_SPEED;
             break;
         case "e":
-            input.lookup = true;
+            input.pitch = KEY_PITCH_SPEED;
             break;
         case "q":
-            input.lookdown = true;
+            input.pitch = -KEY_PITCH_SPEED;
             break;
         default:
             return;
@@ -268,10 +265,10 @@ function onKeyUp(e) {
             input.upDown = 0;
             break;
         case "e":
-            input.lookup = false;
+            input.pitch = 0;
             break;
         case "q":
-            input.lookdown = false;
+            input.pitch = 0;
             break;
         default:
             return;

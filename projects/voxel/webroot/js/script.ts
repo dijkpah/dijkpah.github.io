@@ -1,5 +1,3 @@
-"use strict";
-
 /*******************************************************************************
  * Constants
  ******************************************************************************/
@@ -113,7 +111,7 @@ function render(): void {
     const cosAngle = Math.cos(camera.angle);
     
     const hiddenY = new Int32Array(screenWidth);
-    for(let x=0; x<CANVAS_ELEM.width; x++) {
+    for(let x=0; x < screenWidth; x++) {
         hiddenY[x] = CANVAS_ELEM.height;
     }
     
@@ -125,41 +123,37 @@ function render(): void {
         const prx =   cosAngle * z - sinAngle * z;
         const pry =  -sinAngle * z - cosAngle * z;
         
-        const dx = (prx - plx) / screenWidth;
-        const dy = (pry - ply) / screenWidth;
+        const deltaX = (prx - plx) / screenWidth;
+        const deltaY = (pry - ply) / screenWidth;
         plx += camera.x;
         ply += camera.y;
 
-        const invz = 240 / z;
+        const invZ = 240 / z;
         const buf32 = screenData.buf32;
         
         for(let x=0; x < screenWidth; x++) {
             
             const mapOffset = ((Math.floor(ply) & mapWidthPeriod) << map.shift) + (Math.floor(plx) & mapHeightPeriod);
-            const heightOnScreen = (camera.height - map.altitude[mapOffset]) * invz + camera.horizon;
+            const heightOnScreen = (camera.height - map.altitude[mapOffset]) * invZ + camera.horizon;
 
-            let ytop = heightOnScreen | 0;
-            const ybottom = hiddenY[x];
+            const yTop = Math.max(heightOnScreen | 0, 0);
+            const yBottom = hiddenY[x];
 
             // Draw vertical line
-            if (ytop <= ybottom) {
-                if (ytop < 0) {
-                    ytop = 0;
-                }
-                
+            if (yTop <= yBottom) {                
                 // get offset on screen for the vertical line
-                let offset = ((ytop * screenWidth) + x);
-                for (let k = ytop; k < ybottom; k++) {
+                let offset = ((yTop * screenWidth) + x);
+                for (let k = yTop; k < yBottom; k++) {
                     buf32[offset] = map.color[mapOffset];
                     offset = offset + screenWidth;
                 }
             }
 
-            if (heightOnScreen < ybottom) {
+            if (heightOnScreen < yBottom) {
                 hiddenY[x] = heightOnScreen;
             } 
-            plx += dx;
-            ply += dy;
+            plx += deltaX;
+            ply += deltaY;
         }
         // Reduce level of detail further from camera
         deltaZ *= 1.0025;
@@ -223,6 +217,11 @@ function getMousePosition(e: MouseEvent | TouchEvent): [number, number] {
 }
 
 function onMouseDown(e: MouseEvent | TouchEvent): void {
+    if("button" in e) {
+        if(e.button !== 0) {
+            return;
+        }
+    }
     input.forwardBackward = MOUSE_FORWARD_SPEED;
     input.mouseposition = getMousePosition(e);
 }
