@@ -67,8 +67,7 @@ const input = {
     forwardBackward: 0,
     leftRight:       0,
     upDown:          0,
-    lookup:          false,
-    lookdown:        false,
+    pitch:           0,
     mouseposition:   null as null | [number, number],
 }
 let time = new Date().getTime();
@@ -153,7 +152,7 @@ function render(): void {
                 // get offset on screen for the vertical line
                 let offset = ((ytop * screenWidth) + x);
                 for (let k = ytop; k < ybottom; k++) {
-                    buf32[offset] =  map.color[mapOffset];
+                    buf32[offset] = map.color[mapOffset];
                     offset = offset + screenWidth;
                 }
             }
@@ -193,11 +192,8 @@ function updateCamera(): void {
     if (input.upDown != 0) {
         camera.height += input.upDown * delta;
     }
-    if (input.lookup) {
-        camera.horizon += KEY_PITCH_SPEED * delta;
-    }
-    if (input.lookdown) {
-        camera.horizon -= KEY_PITCH_SPEED * delta;
+    if (input.pitch) {
+        camera.horizon += input.pitch * delta;
     }
     
     // Collision detection. Don't fly below the surface.
@@ -283,10 +279,10 @@ function onKeyDown(e: KeyboardEvent): boolean | void {
             input.upDown = -KEY_UPDOWN_SPEED;
             break;
         case "e":
-            input.lookup = true;
+            input.pitch = KEY_PITCH_SPEED;
             break;
         case "q":
-            input.lookdown = true;
+            input.pitch = -KEY_PITCH_SPEED;
             break;
         default:
             return;
@@ -320,10 +316,10 @@ function onKeyUp(e: KeyboardEvent): boolean | void {
             input.upDown = 0;
             break;
         case "e":
-            input.lookup = false;
+            input.pitch = 0;
             break;
         case "q":
-            input.lookdown = false;
+            input.pitch = 0;
             break;
         default:
             return;
