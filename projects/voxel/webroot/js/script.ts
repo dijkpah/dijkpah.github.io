@@ -81,10 +81,8 @@ let frameCount = 0;
  ******************************************************************************/
 
 function hexColorToUInt8(color: string): number {
-    const r = color.substring(1,3);
-    const g = color.substring(3,5);
-    const b = color.substring(5,7);
-    return parseInt(`0xFF${b}${g}${r}`, 16);
+    const [_hash, r1,r2,g1,g2,b1,b2] = color;
+    return parseInt(`0xFF${b1}${b2}${g1}${g2}${r1}${r2}`, 16);
 }
 
 /*******************************************************************************
