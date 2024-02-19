@@ -338,7 +338,6 @@ function onResize(): void {
     const bufarray   = new ArrayBuffer(screenData.imagedata.width * screenData.imagedata.height * 4);
     screenData.buf8  = new Uint8Array(bufarray);
     screenData.buf32 = new Uint32Array(bufarray);
-    draw();
 }
 
 /*******************************************************************************
@@ -388,7 +387,6 @@ function onLoadedImages(result: ImageData[]): void {
         map.color[i] = 0xFF000000 | (color[(i<<2) + 2] << 16) | (color[(i<<2) + 1] << 8) | color[(i<<2) + 0];
         map.altitude[i] = height[i<<2];
     }
-    draw();
 }
 
 // Bootstrapping ---------------------------------------------------------------
@@ -414,6 +412,7 @@ function init(): void {
         frameCount = 0;
         timelastframe = current;
     }, 2000);
+    draw();
 }
 
 init();

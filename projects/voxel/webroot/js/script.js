@@ -27,7 +27,7 @@ const camera = {
     height: 78, // height of the camera
     angle: 0, // direction of the camera
     horizon: HORIZON_HORIZONTAL, // horizon position (look up and down)
-    distance: 2000, // draw distance of map
+    distance: 800, // draw distance of map
     speed: 0.03 // camera movement speed 
 };
 // Landscape data --------------------------------------------------------------
@@ -285,7 +285,6 @@ function onResize() {
     const bufarray = new ArrayBuffer(screenData.imagedata.width * screenData.imagedata.height * 4);
     screenData.buf8 = new Uint8Array(bufarray);
     screenData.buf32 = new Uint32Array(bufarray);
-    draw();
 }
 /*******************************************************************************
  * Image loaders
@@ -330,7 +329,6 @@ function onLoadedImages(result) {
         map.color[i] = 0xFF000000 | (color[(i << 2) + 2] << 16) | (color[(i << 2) + 1] << 8) | color[(i << 2) + 0];
         map.altitude[i] = height[i << 2];
     }
-    draw();
 }
 // Bootstrapping ---------------------------------------------------------------
 function init() {
@@ -352,5 +350,6 @@ function init() {
         frameCount = 0;
         timelastframe = current;
     }, 2000);
+    draw();
 }
 init();
