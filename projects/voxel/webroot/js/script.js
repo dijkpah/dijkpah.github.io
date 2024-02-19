@@ -186,7 +186,6 @@ function getMousePosition(e) {
 function onMouseDown(e) {
     input.forwardBackward = MOUSE_FORWARD_SPEED;
     input.mouseposition = getMousePosition(e);
-    time = new Date().getTime();
 }
 function onMouseUp() {
     input.mouseposition = null;
@@ -221,11 +220,11 @@ function onKeyDown(e) {
             break;
         case "ArrowUp":
         case "w":
-            input.forwardBackward = KEY_UPDOWN_SPEED;
+            input.forwardBackward = KEY_FORWARD_SPEED;
             break;
         case "ArrowDown":
         case "s":
-            input.forwardBackward = -KEY_UPDOWN_SPEED;
+            input.forwardBackward = -KEY_FORWARD_SPEED;
             break;
         case "r":
             input.upDown = KEY_UPDOWN_SPEED;

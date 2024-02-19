@@ -230,7 +230,6 @@ function getMousePosition(e: MouseEvent | TouchEvent): [number, number] {
 function onMouseDown(e: MouseEvent | TouchEvent): void {
     input.forwardBackward = MOUSE_FORWARD_SPEED;
     input.mouseposition = getMousePosition(e);
-    time = new Date().getTime();
 }
 
 function onMouseUp(): void {
