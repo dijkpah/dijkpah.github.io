@@ -4,13 +4,27 @@
  * Constants
  ******************************************************************************/
 
-const CANVAS_ELEM = document.getElementById('fullscreenCanvas')! as HTMLCanvasElement
+const CANVAS_ELEM = document.getElementById('canvas')! as HTMLCanvasElement
 const CANVAS_CONTEXT = CANVAS_ELEM.getContext('2d')!;
 
 const INIT_IMAGE_DATA = CANVAS_CONTEXT.createImageData(CANVAS_ELEM.width, CANVAS_ELEM.height);
 const INIT_BUFF_ARR = new ArrayBuffer(INIT_IMAGE_DATA.width * INIT_IMAGE_DATA.height * 4);
 
 const BACKGROUND_COLOR = "#9090E0";
+
+// Controls --------------------------------------------------------------------
+
+const HORIZON_HORIZONTAL = 100;
+
+const MOUSE_FORWARD_SPEED = 3;
+const MOUSE_PITCH_SPEED = 500;
+const MOUSE_LEFTRIGHT_SPEED = .2;
+const MOUSE_UPDOWN_SPEED = 10;
+
+const KEY_FORWARD_SPEED = 3;
+const KEY_PITCH_SPEED = 5;
+const KEY_LEFTRIGHT_SPEED = .05;
+const KEY_UPDOWN_SPEED = 2;
 
 /*******************************************************************************
  * Variables
@@ -23,8 +37,8 @@ const camera = {
     y:        800, // y position on the map
     height:    78, // height of the camera
     angle:      0, // direction of the camera
-    horizon:  100, // horizon position (look up and down)
-    distance: 800, // distance of map
+    horizon:  HORIZON_HORIZONTAL, // horizon position (look up and down)
+    distance: 800, // draw distance of map
     speed:   0.03  // camera movement speed 
 };
 
@@ -180,7 +194,7 @@ function updateCamera(): void {
     
     input.keyPressed = false;
     if (input.leftRight != 0) {
-        camera.angle += input.leftRight * 0.1 * delta;
+        camera.angle += input.leftRight * delta;
         input.keyPressed = true;
     }
     if (input.forwardBackward != 0) {
@@ -193,11 +207,11 @@ function updateCamera(): void {
         input.keyPressed = true;
     }
     if (input.lookup) {
-        camera.horizon += 2 * delta;
+        camera.horizon += KEY_PITCH_SPEED * delta;
         input.keyPressed = true;
     }
     if (input.lookdown) {
-        camera.horizon -= 2 * delta;
+        camera.horizon -= KEY_PITCH_SPEED * delta;
         input.keyPressed = true;
     }
     
@@ -229,7 +243,7 @@ function getMousePosition(e: MouseEvent | TouchEvent): [number, number] {
 }
 
 function onMouseDown(e: MouseEvent | TouchEvent): void {
-    input.forwardBackward = 3;
+    input.forwardBackward = MOUSE_FORWARD_SPEED;
     input.mouseposition = getMousePosition(e);
     time = new Date().getTime();
     
@@ -256,34 +270,37 @@ function onMouseMove(e: MouseEvent | TouchEvent): void {
     
     const currentMousePosition = getMousePosition(e);
     
-    input.leftRight = (input.mouseposition[0] - currentMousePosition[0]) / window.innerWidth * 2;
-    camera.horizon  = 100 + (input.mouseposition[1] - currentMousePosition[1]) / window.innerHeight * 500;
-    input.upDown    = (input.mouseposition[1] - currentMousePosition[1]) / window.innerHeight * 10;
+    const deltaX = (input.mouseposition[0] - currentMousePosition[0]) / window.innerWidth;
+    const deltaY = (input.mouseposition[1] - currentMousePosition[1]) / window.innerHeight;
+
+    input.leftRight = deltaX * MOUSE_LEFTRIGHT_SPEED;
+    camera.horizon  = HORIZON_HORIZONTAL + deltaY * MOUSE_PITCH_SPEED;
+    input.upDown    = deltaY * MOUSE_UPDOWN_SPEED;
 }
 
 function onKeyDown(e: KeyboardEvent): boolean | void {    
     switch(e.key) {
         case "ArrowLeft":
         case "a":
-            input.leftRight = +1.;
+            input.leftRight = KEY_LEFTRIGHT_SPEED;
             break;
         case "ArrowRight":
         case "d":
-            input.leftRight = -1.;
+            input.leftRight = -KEY_LEFTRIGHT_SPEED;
             break;
         case "ArrowUp":
         case "w":
-            input.forwardBackward = 3.;
+            input.forwardBackward = KEY_UPDOWN_SPEED;
             break;
         case "ArrowDown":
         case "s":
-            input.forwardBackward = -3.;
+            input.forwardBackward = -KEY_UPDOWN_SPEED;
             break;
         case "r":
-            input.upDown = +2.;
+            input.upDown = KEY_UPDOWN_SPEED;
             break;
         case "f":
-            input.upDown = -2.;
+            input.upDown = -KEY_UPDOWN_SPEED;
             break;
         case "e":
             input.lookup = true;
