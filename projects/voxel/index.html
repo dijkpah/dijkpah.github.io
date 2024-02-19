@@ -41,7 +41,7 @@
         <b>WASD</b> or <b>Cursor Keys</b> or <b>left click</b> move, <b>R|F</b> up | down, <b>Q|E</b> pitch,
         <br/>
 
-        <select name="Mapselector" size="1" onchange="LoadMap(this.value);" value="C1W;D1">
+        <select name="Mapselector" size="1" onchange="loadMap(this.value);" value="C1W;D1">
             <option value="C1W;D1">Map C1W</option>
             <option value="C2W;D2">Map C2W</option>
             <option value="C3;D3">Map C3</option>
@@ -74,8 +74,15 @@
             <option value="C29W;D16">Map C29W</option>
         </select>
 
+        <select name="FadeSelector" size="1" onchange="changeFade(this.value)" value="none">
+            <option value="none">None</option>
+            <option value="linear">Linear</option>
+            <option value="linear_delayed">Linear delayed</option>
+            <option value="exponential">Exponential</option>
+        </select>
+
         <label for="distancerange">Distance</label>
-        <input id="distancerange" type="range" min="100" max="2000" step="1" onchange="camera.distance = this.value">
+        <input id="distancerange" type="range" min="100" max="4000" step="1" onchange="changeCameraDistance(this.value)" value="2000">
     </div>
 
     <canvas id="canvas">

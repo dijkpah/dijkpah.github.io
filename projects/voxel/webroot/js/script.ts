@@ -75,6 +75,8 @@ let time = new Date().getTime();
 let timelastframe = new Date().getTime();
 let frameCount = 0;
 
+let fade = noFade;
+
 /*******************************************************************************
  * Helper functions
  ******************************************************************************/
@@ -83,6 +85,27 @@ function hexColorToUInt8(color: string): number {
     const [_hash, r1,r2,g1,g2,b1,b2] = color;
     return parseInt(`0xFF${b1}${b2}${g1}${g2}${r1}${r2}`, 16);
 }
+
+function inverseExponential(maxX: number, zeroAt: number): (x: number) => number {
+    const c = Math.sqrt(zeroAt * zeroAt / maxX);
+    return (x: number) => {
+        const e = x / c;
+        return -(e*e) + maxX;
+    }
+}
+
+/*******************************************************************************
+ * Faders: return alpha (opacity) at distance from camera
+ ******************************************************************************/
+
+function noFade(_z: number): number { return 255 };
+function linearFade (z: number): number { return 255 - 255 * z / camera.distance };
+function linearDelayedFade (z: number): number { 
+    const r = 0.75;
+    const c = 255/(1-r);
+    return ( z/camera.distance <= r) ? 255 : c - c * z / camera.distance; 
+}
+let exponentialFade = inverseExponential(255, camera.distance);
 
 /*******************************************************************************
  * Rendering functions
@@ -147,7 +170,9 @@ function render(): void {
                 // get offset on screen for the vertical line
                 let offset = ((yTop * screenWidth) + x);
                 for (let k = yTop; k < yBottom; k++) {
-                    buf32[offset] = map.color[mapOffset];
+                    // Linear fade to background color using mask
+                    const mask = fade(z) << 24 | 0x00FFFFFF; 
+                    buf32[offset] = mask & map.color[mapOffset];
                     offset = offset + screenWidth;
                 }
             }
@@ -397,6 +422,32 @@ function onLoadedImages(result: ImageData[]): void {
     }
 }
 
+
+/*******************************************************************************
+ * Rendering configuration
+ ******************************************************************************/
+
+function changeCameraDistance(distance: number): void {
+    const exponentialFadeSelected = fade === exponentialFade;
+
+    camera.distance = distance
+    exponentialFade = inverseExponential(255, camera.distance);
+
+    if(exponentialFadeSelected) {
+        fade = exponentialFade;
+    }
+}
+
+function changeFade(name: string): void {
+    switch(name) {
+        case "none": fade = noFade; break;
+        case "linear": fade = linearFade; break;
+        case "linear_delayed": fade = linearDelayedFade; break;
+        case "exponential": fade = exponentialFade; break;
+    }
+}
+
+
 // Bootstrapping ---------------------------------------------------------------
 
 function init(): void {    
@@ -413,6 +464,7 @@ function init(): void {
     CANVAS_ELEM.ontouchstart = onMouseDown;
     CANVAS_ELEM.ontouchmove  = onMouseMove;
     CANVAS_ELEM.ontouchend   = onMouseUp;
+    CANVAS_ELEM.style.setProperty("background", BACKGROUND_COLOR);
     
     window.setInterval(function(){
         const current = new Date().getTime();
