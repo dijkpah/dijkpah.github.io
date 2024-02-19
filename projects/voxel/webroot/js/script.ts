@@ -271,11 +271,11 @@ function onKeyDown(e: KeyboardEvent): boolean | void {
             break;
         case "ArrowUp":
         case "w":
-            input.forwardBackward = KEY_UPDOWN_SPEED;
+            input.forwardBackward = KEY_FORWARD_SPEED;
             break;
         case "ArrowDown":
         case "s":
-            input.forwardBackward = -KEY_UPDOWN_SPEED;
+            input.forwardBackward = -KEY_FORWARD_SPEED;
             break;
         case "r":
             input.upDown = KEY_UPDOWN_SPEED;
