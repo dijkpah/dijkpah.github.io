@@ -101,9 +101,8 @@ function inverseExponential(maxX: number, zeroAt: number): (x: number) => number
 function noFade(_z: number): number { return 255 };
 function linearFade (z: number): number { return 255 - 255 * z / camera.distance };
 function linearDelayedFade (z: number): number { 
-    const r = 0.75;
-    const c = 255/(1-r);
-    return ( z/camera.distance <= r) ? 255 : c - c * z / camera.distance; 
+    const c = 255/0.25; // last 25% of the distance is faded
+    return Math.min(255, c - c * z / camera.distance); 
 }
 let exponentialFade = inverseExponential(255, camera.distance);
 
@@ -141,6 +140,8 @@ function render(): void {
         hiddenY[x] = CANVAS_ELEM.height;
     }
 
+    const buf32 = screenData.buf32;
+
     // Draw from front to back
     for(let z=1, deltaZ=1; z<camera.distance; z+=deltaZ) {
         // 90 degree field of view
@@ -155,11 +156,10 @@ function render(): void {
         ply += camera.y;
 
         const invZ = scaleHeight / z;
-        const buf32 = screenData.buf32;
         
         for(let x=0; x < screenWidth; x++) {
             
-            const mapOffset = ((Math.floor(ply) & mapWidthPeriod) << map.shift) + (Math.floor(plx) & mapHeightPeriod);
+            const mapOffset = ((ply & mapWidthPeriod) << map.shift) + (plx & mapHeightPeriod);
             const heightOnScreen = (camera.height - map.altitude[mapOffset]) * invZ + camera.horizon;
 
             const yTop = Math.max(heightOnScreen | 0, 0);
