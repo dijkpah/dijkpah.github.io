@@ -131,7 +131,7 @@ function render(): void {
     const mapHeightPeriod = map.height - 1;
     
     const screenWidth = CANVAS_ELEM.width;
-    const scaleHeight = 0.3 * screenWidth;
+    const scaleHeight = screenWidth / 2;
     
     const sinAngle = Math.sin(camera.angle);
     const cosAngle = Math.cos(camera.angle);
