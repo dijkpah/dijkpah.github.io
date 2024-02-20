@@ -1,0 +1,58 @@
+
+html, body {margin: 0; height: 100%; overflow: hidden}
+h1, h2, h3, h4 {
+    margin: 4px 0;
+    user-select: none;
+}
+canvas { 
+    width: 100%; 
+    height: 100%; 
+}
+#info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 200px;
+    background: white;
+    opacity: 0.2;
+
+    position: absolute;
+    top: 0px;
+
+    padding: 5px;
+    z-index:100;
+    font-family: "Helvetica", sans-serif;
+}
+#info:hover,
+#info:focus-within {
+    opacity: 0.8;
+}
+#info h1 {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+#info .control {
+    background: #EEE;
+    padding: 4px 8px;
+    display: flex;
+    gap: 8px;
+    display: flex;
+    justify-content: space-between;
+}
+#info .control label {
+    font-weight: 600;
+    color: #333;
+}
+
+#fps {
+    position: absolute;
+    float: right;
+    top: 0px;
+    right: 0px;
+    z-index:100;
+    padding: 5px;
+    color: white;
+    font-family: "Helvetica", sans-serif;
+    font-size: 16px;
+}

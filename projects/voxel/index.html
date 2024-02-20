@@ -1,46 +1,19 @@
 <!doctype html>
-<html><head>
+<html>
+<head>
     <title>Voxel Space project demonstration</title>
-    <style>
-        html, body {margin: 0; height: 100%; overflow: hidden}
-        canvas { 
-            width: 100%; 
-            height: 100%; 
-        }
-        a { color: white; }
-        #info {
-            position: absolute;
-            top: 0px;
-            width: 100%;
-            padding: 5px;
-            z-index:100;
-            color: white;
-            font-family: "Arial", Times, serif;
-            font-size: 120%;
-            }
-        #fps {
-            float: right;
-            position: absolute;
-            top: 0px;
-            right: 10px;
-            z-index:100;
-            padding: 5px;
-            color: white;
-            font-family: "Arial", Times, serif;
-            font-size: 120%;
-            }
-    </style>
+    <link type="text/css" rel="stylesheet" href="./webroot/css/style.css">
 </head>
-
 <body scroll="no">
-
     <div id="fps">0.0 fps</div>
 
     <div id="info">
-        Fly controls
-        <b>WASD</b> or <b>Cursor Keys</b> or <b>left click</b> move, <b>R|F</b> up | down, <b>Q|E</b> pitch,
+        <h1>Controls</h1>
+        <div class="control"><label>Move</label>WASD/click</div>
+        <div class="control"><label>Up/down</label>R/F</div>
+        <div class="control"><label>Pitch</label>Q/E</div>
         <br/>
-
+        <h4>Map selector</h4>
         <select name="Mapselector" size="1" onchange="loadMap(this.value);" value="C1W;D1">
             <option value="C1W;D1">Map C1W</option>
             <option value="C2W;D2">Map C2W</option>
@@ -74,16 +47,19 @@
             <option value="C29W;D16">Map C29W</option>
         </select>
 
+        <h4>Fade selector</h4>
         <select name="FadeSelector" size="1" onchange="changeFade(this.value)" value="none">
             <option value="none">None</option>
             <option value="linear">Linear</option>
             <option value="linear_delayed">Linear delayed</option>
             <option value="exponential">Exponential</option>
         </select>
+        <h4>Render distance</h4>
+        <input id="distancerange" type="range" min="100" max="4000" step="1" onchange="changeCameraDistance(this.value)" value="2000" />
+        
+        <h4>Goxel text file</h4>
         <input id="file" name="file" type="file" onchange="upload()" />
         <button onclick="download()">Download</button>
-        <label for="distancerange">Distance</label>
-        <input id="distancerange" type="range" min="100" max="4000" step="1" onchange="changeCameraDistance(this.value)" value="2000">
     </div>
 
     <canvas id="canvas">
