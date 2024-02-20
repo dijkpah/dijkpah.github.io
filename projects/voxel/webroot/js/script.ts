@@ -422,6 +422,64 @@ function onLoadedImages(result: ImageData[]): void {
     }
 }
 
+/*******************************************************************************
+ * File handling
+ ******************************************************************************/
+
+async function upload(): Promise<void> {
+    const input = document.getElementById("file") as HTMLInputElement;
+    
+    // Reset map
+    map.altitude = new Uint8Array(1024*1024);
+    map.color = new Uint32Array(1024*1024);
+
+    const voxels = (await input.files![0].text()).split("\r\n");
+    for(const voxel of voxels) {
+        if(voxel[0] === "#") {
+            continue; // ignore comments
+        }
+        // X Y Z RRGGBB
+        const [xStr, yStr, zStr, rrggbb] = voxel.split(" ");
+        const x = Number(xStr);
+        const y = Number(yStr);
+        const z = Number(zStr);
+        const i = 1024 * x + y;
+
+        if(z >= map.altitude[i]) {
+            map.altitude[i] = z;
+            map.color[i] = hexColorToUInt8("#"+rrggbb);
+        }
+    }
+}
+
+function download(): void {
+    // Create goxel text file
+    let data = "";
+    for(let x=0; x<map.width; x++) {
+        for(let y=0; y<map.height; y++){
+            const color = map.color[1024 * x + y].toString(16);
+            const [_a1, _a2, b1, b2, g1, g2, r1, r2] = color;
+            const lowestNeighbour = Math.min(...[
+                map.altitude[1024 * x + y],
+                map.altitude[1024 * x + y + 1],
+                map.altitude[1024 * x + y - 1],
+                map.altitude[1024 * (x+1) + y] ?? 0,
+                map.altitude[1024 * (x-1) + y] ?? 0,
+            ]);
+            for(let z=map.altitude[1024 * x + y]; z >=0 && z >= lowestNeighbour; z--) {
+                data += `${x} ${y} ${z} ${r1}${r2}${g1}${g2}${b1}${b2}\r\n`;
+            }
+        }
+    }
+    // Download file
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(data));
+    element.setAttribute('download', 'goxel.txt');
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+}
 
 /*******************************************************************************
  * Rendering configuration

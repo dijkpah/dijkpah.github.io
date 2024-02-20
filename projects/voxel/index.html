@@ -80,7 +80,8 @@
             <option value="linear_delayed">Linear delayed</option>
             <option value="exponential">Exponential</option>
         </select>
-
+        <input id="file" name="file" type="file" onchange="upload()" />
+        <button onclick="download()">Download</button>
         <label for="distancerange">Distance</label>
         <input id="distancerange" type="range" min="100" max="4000" step="1" onchange="changeCameraDistance(this.value)" value="2000">
     </div>
