@@ -281,20 +281,20 @@ function onMouseMove(e: MouseEvent | TouchEvent): void {
 }
 
 function onKeyDown(e: KeyboardEvent): boolean | void {    
-    switch(e.key) {
-        case "ArrowLeft":
+    switch(e.key.toLocaleLowerCase()) {
+        case "arrowleft":
         case "a":
             input.leftRight = KEY_LEFTRIGHT_SPEED;
             break;
-        case "ArrowRight":
+        case "arrowright":
         case "d":
             input.leftRight = -KEY_LEFTRIGHT_SPEED;
             break;
-        case "ArrowUp":
+        case "arrowup":
         case "w":
             input.forwardBackward = KEY_FORWARD_SPEED;
             break;
-        case "ArrowDown":
+        case "arrowdown":
         case "s":
             input.forwardBackward = -KEY_FORWARD_SPEED;
             break;
@@ -318,20 +318,20 @@ function onKeyDown(e: KeyboardEvent): boolean | void {
 }
 
 function onKeyUp(e: KeyboardEvent): boolean | void {
-    switch(e.key) {
-        case "ArrowLeft":
+    switch(e.key.toLocaleLowerCase()) {
+        case "arrowleft":
         case "a":
             input.leftRight = 0;
             break;
-        case "ArrowRight":
+        case "arrowright":
         case "d":
             input.leftRight = 0;
             break;
-        case "ArrowUp":
+        case "arrowup":
         case "w":
             input.forwardBackward = 0;
             break;
-        case "ArrowDown":
+        case "arrowdown":
         case "s":
             input.forwardBackward = 0;
             break;
