@@ -429,21 +429,36 @@ function onLoadedImages(result: ImageData[]): void {
 async function upload(): Promise<void> {
     const input = document.getElementById("file") as HTMLInputElement;
     
-    // Reset map
-    map.altitude = new Uint8Array(1024*1024);
-    map.color = new Uint32Array(1024*1024);
+    // X Y Z RRGGBB
+    const voxels = (await input.files![0].text())
+        .split("\r\n")
+        .filter(voxel => voxel.trim().length > 0 && voxel[0] !== "#");
 
-    const voxels = (await input.files![0].text()).split("\r\n");
+    // Calculate map dimensions
+    let width = 0;
+    let height = 0;
     for(const voxel of voxels) {
-        if(voxel[0] === "#") {
-            continue; // ignore comments
-        }
-        // X Y Z RRGGBB
+        const [xStr, yStr] = voxel.split(" ");
+        const x = Number(xStr)|0;
+        const y = Number(yStr)|0;
+        width = Math.max(width, x);
+        height = Math.max(height, y);
+    }
+    width++;
+    height++;
+
+    map.altitude = new Uint8Array(width * height);
+    map.color = new Uint32Array(width * height);
+    map.width = width;
+    map.height = height;
+    map.shift = Math.log(width)/Math.log(2);
+
+    for(const voxel of voxels) {
         const [xStr, yStr, zStr, rrggbb] = voxel.split(" ");
-        const x = Number(xStr);
-        const y = Number(yStr);
+        const x = Number(xStr)|0;
+        const y = Number(yStr)|0;
         const z = Number(zStr);
-        const i = 1024 * x + y;
+        const i = width * x + y;
 
         if(z >= map.altitude[i]) {
             map.altitude[i] = z;
