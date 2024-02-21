@@ -470,18 +470,22 @@ async function upload(): Promise<void> {
 function download(): void {
     // Create goxel text file
     let data = "";
-    for(let x=0; x<map.width; x++) {
-        for(let y=0; y<map.height; y++){
-            const color = map.color[1024 * x + y].toString(16);
+    const { width, height } = map;
+    for(let x=0; x<width; x++) {
+        for(let y=0; y<height; y++){
+            const color = map.color[width * x + y].toString(16);
             const [_a1, _a2, b1, b2, g1, g2, r1, r2] = color;
+            const altitude = map.altitude[width * x + y];
+            data += `${x} ${y} ${altitude} ${r1}${r2}${g1}${g2}${b1}${b2}\r\n`;
+
+            // Fill gaps between highest voxel and neighbours
             const lowestNeighbour = Math.min(...[
-                map.altitude[1024 * x + y],
-                map.altitude[1024 * x + y + 1],
-                map.altitude[1024 * x + y - 1],
-                map.altitude[1024 * (x+1) + y] ?? 0,
-                map.altitude[1024 * (x-1) + y] ?? 0,
+                map.altitude[width * x + y + 1] ?? -1,
+                map.altitude[width * x + y - 1] ?? -1,
+                map.altitude[width * (x+1) + y] ?? -1,
+                map.altitude[width * (x-1) + y] ?? -1,
             ]);
-            for(let z=map.altitude[1024 * x + y]; z >=0 && z >= lowestNeighbour; z--) {
+            for(let z=altitude - 1; z >=0 && z > lowestNeighbour; z--) {
                 data += `${x} ${y} ${z} ${r1}${r2}${g1}${g2}${b1}${b2}\r\n`;
             }
         }
