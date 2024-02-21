@@ -3,7 +3,6 @@
  ******************************************************************************/
 
 const CANVAS_ELEM = document.getElementById('canvas')! as HTMLCanvasElement
-const CANVAS_ELEM_MAX_WIDTH = 800;
 const CANVAS_CONTEXT = CANVAS_ELEM.getContext('2d')!;
 
 const INIT_IMAGE_DATA = CANVAS_CONTEXT.createImageData(CANVAS_ELEM.width, CANVAS_ELEM.height);
