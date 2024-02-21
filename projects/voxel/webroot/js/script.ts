@@ -64,15 +64,15 @@ const screenData = {
 
 const settings = {
     resolution: 1,
-    lod: 1.0025,
+    lodInv: 0.0015,
     fade: noFade,
 }
 
 // Input data ------------------------------------------------------------------
 
 const input = {
-    forwardBackward: 0,
-    leftRight:       0,
+    forwardBackward: 0, //10
+    leftRight:       0,//0.0005
     upDown:          0,
     pitch:           0,
     mouseposition:   null as null | [number, number],
@@ -147,7 +147,7 @@ function render(): void {
     }
 
     const buf32 = screenData.buf32;
-    const { fade, lod } = settings;
+    const { fade, lodInv } = settings;
 
     // Draw from front to back
     for(let z=1, deltaZ=1; z<camera.distance; z+=deltaZ) {
@@ -191,7 +191,7 @@ function render(): void {
             ply += deltaY;
         }
         // Reduce level of detail further from camera
-        deltaZ *= lod;
+        deltaZ += lodInv;
     }
 }
 
@@ -523,7 +523,8 @@ function changeFade(name: string): void {
 }
 
 function changeLOD(val: number) {
-    settings.lod = val;
+    // enforces number between 0.00666666 and 0
+    settings.lodInv = 1 - (1490 +  Number(val)) / 1500;
 }
 
 function changeResolution(val: number) {
