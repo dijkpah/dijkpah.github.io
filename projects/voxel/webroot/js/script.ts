@@ -163,6 +163,7 @@ function render(): void {
         ply += camera.y;
 
         const invZ = scaleHeight / z;
+        const mask = fade(z) << 24 | 0x00FFFFFF; 
         
         for(let x=0; x < screenWidth; x++) {
             
@@ -178,7 +179,6 @@ function render(): void {
                 let offset = ((yTop * screenWidth) + x);
                 for (let k = yTop; k < yBottom; k++) {
                     // Linear fade to background color using mask
-                    const mask = fade(z) << 24 | 0x00FFFFFF; 
                     buf32[offset] = mask & map.color[mapOffset];
                     offset = offset + screenWidth;
                 }
