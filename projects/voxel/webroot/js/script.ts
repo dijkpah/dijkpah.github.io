@@ -60,6 +60,14 @@ const screenData = {
     backgroundcolor: hexColorToUInt8(BACKGROUND_COLOR),
 };
 
+// Rendering configuration -----------------------------------------------------
+
+const settings = {
+    resolution: 1,
+    lod: 1.0025,
+    fade: noFade,
+}
+
 // Input data ------------------------------------------------------------------
 
 const input = {
@@ -74,8 +82,6 @@ let time = new Date().getTime();
 // for fps display
 let timelastframe = new Date().getTime();
 let frameCount = 0;
-
-let fade = noFade;
 
 /*******************************************************************************
  * Helper functions
@@ -141,6 +147,7 @@ function render(): void {
     }
 
     const buf32 = screenData.buf32;
+    const { fade, lod } = settings;
 
     // Draw from front to back
     for(let z=1, deltaZ=1; z<camera.distance; z+=deltaZ) {
@@ -184,7 +191,7 @@ function render(): void {
             ply += deltaY;
         }
         // Reduce level of detail further from camera
-        deltaZ *= 1.0025;
+        deltaZ *= lod;
     }
 }
 
@@ -354,17 +361,8 @@ function onKeyUp(e: KeyboardEvent): boolean | void {
 }
 
 function onResize(): void {
-    const ratio = window.innerWidth / window.innerHeight;
-    const maxWidth = CANVAS_ELEM_MAX_WIDTH;
-    const maxHeight = maxWidth / ratio;
-
-    if(window.innerWidth > maxWidth || window.innerHeight > maxHeight) {
-        CANVAS_ELEM.width = maxWidth;
-        CANVAS_ELEM.height = maxWidth / ratio;
-    } else {
-        CANVAS_ELEM.width = window.innerWidth;
-        CANVAS_ELEM.height = window.innerHeight;
-    }
+    CANVAS_ELEM.width = window.innerWidth * settings.resolution;
+    CANVAS_ELEM.height = window.innerHeight * settings.resolution;
 
     screenData.imagedata = CANVAS_CONTEXT.createImageData(CANVAS_ELEM.width, CANVAS_ELEM.height);
     
@@ -505,25 +503,33 @@ function download(): void {
  ******************************************************************************/
 
 function changeCameraDistance(distance: number): void {
-    const exponentialFadeSelected = fade === exponentialFade;
+    const exponentialFadeSelected = settings.fade === exponentialFade;
 
     camera.distance = distance
     exponentialFade = inverseExponential(255, camera.distance);
 
     if(exponentialFadeSelected) {
-        fade = exponentialFade;
+        settings.fade = exponentialFade;
     }
 }
 
 function changeFade(name: string): void {
     switch(name) {
-        case "none": fade = noFade; break;
-        case "linear": fade = linearFade; break;
-        case "linear_delayed": fade = linearDelayedFade; break;
-        case "exponential": fade = exponentialFade; break;
+        case "none": settings.fade = noFade; break;
+        case "linear": settings.fade = linearFade; break;
+        case "linear_delayed": settings.fade = linearDelayedFade; break;
+        case "exponential": settings.fade = exponentialFade; break;
     }
 }
 
+function changeLOD(val: number) {
+    settings.lod = val;
+}
+
+function changeResolution(val: number) {
+    settings.resolution = val;
+    onResize();
+}
 
 // Bootstrapping ---------------------------------------------------------------
 

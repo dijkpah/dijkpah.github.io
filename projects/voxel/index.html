@@ -13,6 +13,23 @@
         <div class="control"><label>Up/down</label>R/F</div>
         <div class="control"><label>Pitch</label>Q/E</div>
         <br/>
+        <h4>Fade algorithm</h4>
+        <select name="FadeSelector" size="1" onchange="changeFade(this.value)" value="none">
+            <option value="none">None</option>
+            <option value="linear">Linear</option>
+            <option value="linear_delayed">Linear delayed</option>
+            <option value="exponential">Exponential</option>
+        </select>
+        
+        <h4>Render distance</h4>
+        <input id="distancerange" type="range" min="100" max="4000" step="1" onchange="changeCameraDistance(this.value)" value="4000" />
+        
+        <h4>LOD selector</h4>
+        <input id="lodrange" type="range" min="1" max="1.003" step="0.00005" onchange="changeLOD(this.value)" value="1.0025" />
+
+        <h4>Resolution</h4>
+        <input id="lodrange" type="range" min="0.25" max="1" step="0.00005" onchange="changeResolution(this.value)" value="1" />
+
         <h4>Map selector</h4>
         <select name="Mapselector" size="1" onchange="loadMap(this.value);" value="C1W;D1">
             <option value="C1W;D1">Map C1W</option>
@@ -47,16 +64,6 @@
             <option value="C29W;D16">Map C29W</option>
         </select>
 
-        <h4>Fade selector</h4>
-        <select name="FadeSelector" size="1" onchange="changeFade(this.value)" value="none">
-            <option value="none">None</option>
-            <option value="linear">Linear</option>
-            <option value="linear_delayed">Linear delayed</option>
-            <option value="exponential">Exponential</option>
-        </select>
-        <h4>Render distance</h4>
-        <input id="distancerange" type="range" min="100" max="4000" step="1" onchange="changeCameraDistance(this.value)" value="2000" />
-        
         <h4>Goxel text file</h4>
         <input id="file" name="file" type="file" onchange="upload()" />
         <button onclick="download()">Download</button>
