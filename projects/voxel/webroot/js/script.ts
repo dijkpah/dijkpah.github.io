@@ -90,8 +90,9 @@ const layers = [
     [255, hexColorToUInt32("#FF0000")], // range never reached!
     [250, materials.snow], 
     [150, materials.mountain],
-    [135, materials.grass], 
-    [120, materials.forest],
+    [135, materials.mountain],
+    [130, materials.grass], 
+    [120, materials.grass],
     [110, materials.forest],
     [100, materials.grass], 
     [80, materials.gravel],
@@ -117,14 +118,19 @@ console.log(colors.map(_c => "%c ").join(""), ...colors.map(c => `background: ${
 
 const generator = {
     colors: colors,
+    trees: {
+        maxTreeAltitude: 140,
+        minTreeAltitude: 100,
+        treeDensity: 0.05,
+    },
     iterations: 6,
 }
 
 // Input data ------------------------------------------------------------------
 
 const input = {
-    forwardBackward: 0, //10
-    leftRight:       0,//0.0005
+    forwardBackward: 10, //10
+    leftRight:       0.0005,//0.0005
     upDown:          0,
     pitch:           0,
     mouseposition:   null as null | [number, number],
@@ -484,6 +490,7 @@ function onLoadedImages(result: ImageData[]): void {
         map.color[i] = 0xFF000000 | (color[(i<<2) + 2] << 16) | (color[(i<<2) + 1] << 8) | color[(i<<2) + 0];
         map.altitude[i] = height[i<<2];
     }
+    generateMap();
 }
 
 /*******************************************************************************
@@ -674,6 +681,15 @@ function fBm(x: number, y: number, period: number, octaves: number): number {
 }
 
 function generateMap(): void {
+    const width = 1024; 
+    const height = 1024;
+
+    map.altitude = new Uint8Array(width * height);
+    map.color = new Uint32Array(width * height);
+    map.width = width;
+    map.height = height;
+    map.shift = Math.log(width)/Math.log(2);
+
     // Reshuffle perm
     shuffleArray(permInit);
     perm = [...permInit, ...permInit];
@@ -694,11 +710,9 @@ function generateMap(): void {
 }
 
 function generateTrees(): void {
+    const { maxTreeAltitude, minTreeAltitude, treeDensity } = generator.trees;
+    
     const trees = [];
-    const maxTreeAltitude = 135;
-    const minTreeAltitude = 100;
-    const treeDensity = 0.05;
-
     // Decide where to plant
     for(let x=0; x<map.width; x++) {
         for(let y=0; y<map.height; y++) {
