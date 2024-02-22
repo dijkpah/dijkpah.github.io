@@ -1,4 +1,10 @@
 /*******************************************************************************
+ * Types
+ ******************************************************************************/
+
+type ABGR = number;
+
+/*******************************************************************************
  * Constants
  ******************************************************************************/
 
@@ -56,7 +62,7 @@ const screenData = {
     imagedata: INIT_IMAGE_DATA,
     buf8:      new Uint8Array(INIT_BUFF_ARR), // the same array but with bytes
     buf32:     new Uint32Array(INIT_BUFF_ARR), // the same array but with 32-Bit words
-    backgroundcolor: hexColorToUInt8(BACKGROUND_COLOR),
+    backgroundcolor: hexColorToUInt32(BACKGROUND_COLOR),
 };
 
 // Rendering configuration -----------------------------------------------------
@@ -65,6 +71,42 @@ const settings = {
     resolution: 1,
     lodInv: 0.0015,
     fade: noFade,
+}
+
+// Generator configuration -----------------------------------------------------
+
+const colors_seed = [
+    [255, hexColorToUInt32("#FF00FF")], // range never reached!
+    [250, hexColorToUInt32("#FFFFFF")], // White for the mountain tops
+    [150, hexColorToUInt32("#5C5040")], // red for the mountain sides
+    [135, hexColorToUInt32("#54643C")], // green for the valleys
+    [120, hexColorToUInt32("#54643C")], // green for the valleys
+    [115, hexColorToUInt32("#48582C")], // dark green for the forests
+    [100, hexColorToUInt32("#54643C")], // green for the valleys
+    [80, hexColorToUInt32("#808480")], // gray for the beaches
+    [60, hexColorToUInt32("#2F637F")], // blue for the water
+    [20, hexColorToUInt32("#2F637F")], // blue for the water
+    [0, hexColorToUInt32("#000000")], // black for the bottom
+]
+
+// interpolate inbetween colours
+let colors: number[] = [];
+for(let c=0; c<colors_seed.length - 1; c++) {
+    const [iTop, colorTop] = colors_seed[c];
+    const [iBottom, colorBottom] = colors_seed[c+1];
+    const range = (iTop - iBottom);
+    for(let i=iTop; i>iBottom; i--) {
+        const ratio = (i - iBottom)/range;
+        colors[i] = interpolate(colorTop, colorBottom, 1-ratio);
+    }
+}
+
+// Log color palette
+console.log(colors.map(_c => "%c ").join(""), ...colors.map(c => `background: ${uint32ToHexColor(c)};`));
+
+const generator = {
+    colors: colors,
+    iterations: 6,
 }
 
 // Input data ------------------------------------------------------------------
@@ -86,7 +128,21 @@ let frameCount = 0;
  * Helper functions
  ******************************************************************************/
 
-function hexColorToUInt8(color: string): number {
+/* Randomize array in-place using Durstenfeld shuffle algorithm */
+function shuffleArray(array: number[]) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+function uint32ToHexColor(hex: ABGR): string {
+    const padded = `00000000${hex.toString(16)}`;
+    const [ b2, b1, g2, g1, r2, r1] = padded.substring(padded.length - 6);
+    return `#${r2}${r1}${g2}${g1}${b2}${b1}`;
+}
+
+function hexColorToUInt32(color: string): ABGR {
     const [_hash, r1,r2,g1,g2,b1,b2] = color;
     return parseInt(`0xFF${b1}${b2}${g1}${g2}${r1}${r2}`, 16);
 }
@@ -459,7 +515,7 @@ async function upload(): Promise<void> {
 
         if(z >= map.altitude[i]) {
             map.altitude[i] = z;
-            map.color[i] = hexColorToUInt8("#"+rrggbb);
+            map.color[i] = hexColorToUInt32("#"+rrggbb);
         }
     }
 }
@@ -559,3 +615,82 @@ function init(): void {
 }
 
 init();
+
+/**
+ * Algorithm from https://gamedev.stackexchange.com/questions/23625/how-do-you-generate-tileable-perlin-noise
+ */
+
+// Indices
+const is = [];
+for(let i=0; i<256; i++) {
+    is[i] = i;
+}
+
+// Random permutation of heights
+let permInit = [...is];
+shuffleArray(permInit);
+let perm = [...permInit, ...permInit];
+
+const dirs = [...is].map((_v, a) => [
+    Math.cos(a * 2.0 * Math.PI / perm.length),
+    Math.sin(a * 2.0 * Math.PI / perm.length)
+]);
+
+function noise(x: number, y: number, period: number): number {
+    
+    function surflet(gridX: number, gridY: number): number {
+        const distX = Math.abs(x-gridX);
+        const distY = Math.abs(y-gridY);
+        const polyX = 1 - 6*distX**5 + 15*distX**4 - 10*distX**3;
+        const polyY = 1 - 6*distY**5 + 15*distY**4 - 10*distY**3;
+        const hashed = perm[perm[Math.floor(gridX)%period] + Math.floor(gridY)%period];
+        if(dirs[hashed] === undefined) debugger;
+        const grad = (x-gridX)*dirs[hashed][0] + (y-gridY)*dirs[hashed][1]
+        return polyX * polyY * grad;
+    }
+    const intX = Math.floor(x);
+    const intY = Math.floor(y);
+    return (surflet(intX+0, intY+0) + surflet(intX+1, intY+0) +
+            surflet(intX+0, intY+1) + surflet(intX+1, intY+1))
+}
+
+function fBm(x: number, y: number, period: number, octaves: number): number {
+    let val = 0;
+    for(let o=0; o<octaves; o++){
+        val += 0.5**o * noise(x*2**o, y*2**o, period*2**o);
+    }
+    return val
+}
+
+function generateMap(): void {
+    // Reshuffle perm
+    shuffleArray(permInit);
+    perm = [...permInit, ...permInit];
+
+    const freq = 1/map.width;
+    for(let x=0; x<map.width; x++) {
+        for(let y=0; y<map.height; y++) {
+            const val = fBm(x*freq, y*freq, map.width*freq, generator.iterations);
+            var z = (val + 0.5) * 256;
+            const i = map.width * x + y;
+            map.altitude[i] = z;
+            map.color[i] = generator.colors[Math.floor(z)];
+        }
+    }
+}
+
+function interpolate(x: ABGR, y: ABGR, ratio: number): number {
+    const xR = (x & 0x000000FF);
+    const yR = (y & 0x000000FF);
+    const xG = (x & 0x0000FF00) >> 8;
+    const yG = (y & 0x0000FF00) >> 8;
+    const xB = (x & 0x00FF0000) >> 16;
+    const yB = (y & 0x00FF0000) >> 16;
+    
+    const zR = Math.trunc((yR - xR) * ratio + xR);
+    const zG = Math.trunc((yG - xG) * ratio + xG);
+    const zB = Math.trunc((yB - xB) * ratio + xB);
+    
+    const res = (zB << 16) | (zG << 8) | zR;
+    return res + 0xFF000000;
+}
