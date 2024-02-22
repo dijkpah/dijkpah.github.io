@@ -103,6 +103,9 @@ const layers = [
 
 // interpolate inbetween colours
 let colors: number[] = [];
+for(const [ i, color ] of layers) {
+    colors[i] = color;
+}
 for(let l=0; l<layers.length - 1; l++) {
     const [iTop, colorTop] = layers[l];
     const [iBottom, colorBottom] = layers[l+1];
