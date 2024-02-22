@@ -75,25 +75,36 @@ const settings = {
 
 // Generator configuration -----------------------------------------------------
 
-const colors_seed = [
-    [255, hexColorToUInt32("#FF00FF")], // range never reached!
-    [250, hexColorToUInt32("#FFFFFF")], // White for the mountain tops
-    [150, hexColorToUInt32("#5C5040")], // red for the mountain sides
-    [135, hexColorToUInt32("#54643C")], // green for the valleys
-    [120, hexColorToUInt32("#54643C")], // green for the valleys
-    [115, hexColorToUInt32("#48582C")], // dark green for the forests
-    [100, hexColorToUInt32("#54643C")], // green for the valleys
-    [80, hexColorToUInt32("#808480")], // gray for the beaches
-    [60, hexColorToUInt32("#2F637F")], // blue for the water
-    [20, hexColorToUInt32("#2F637F")], // blue for the water
-    [0, hexColorToUInt32("#000000")], // black for the bottom
+
+const materials = {
+    snow: hexColorToUInt32("#FFFFFF"),
+    mountain: hexColorToUInt32("#5C5040"),
+    grass: hexColorToUInt32("#54643C"),
+    forest: hexColorToUInt32("#48582C"),
+    gravel: hexColorToUInt32("#808480"),
+    water: hexColorToUInt32("#2F637F"),
+    waterDeep: hexColorToUInt32("#000000"),
+}
+
+const layers = [
+    [255, hexColorToUInt32("#FF0000")], // range never reached!
+    [250, materials.snow], 
+    [150, materials.mountain],
+    [135, materials.grass], 
+    [120, materials.forest],
+    [110, materials.forest],
+    [100, materials.grass], 
+    [80, materials.gravel],
+    [60, materials.water], 
+    [20, materials.water], 
+    [0, materials.waterDeep],
 ]
 
 // interpolate inbetween colours
 let colors: number[] = [];
-for(let c=0; c<colors_seed.length - 1; c++) {
-    const [iTop, colorTop] = colors_seed[c];
-    const [iBottom, colorBottom] = colors_seed[c+1];
+for(let l=0; l<layers.length - 1; l++) {
+    const [iTop, colorTop] = layers[l];
+    const [iBottom, colorBottom] = layers[l+1];
     const range = (iTop - iBottom);
     for(let i=iTop; i>iBottom; i--) {
         const ratio = (i - iBottom)/range;
@@ -675,6 +686,86 @@ function generateMap(): void {
             const i = map.width * x + y;
             map.altitude[i] = z;
             map.color[i] = generator.colors[Math.floor(z)];
+        }
+    }
+
+    generateTrees();
+    generateShadow();    
+}
+
+function generateTrees(): void {
+    const trees = [];
+    const maxTreeAltitude = 135;
+    const minTreeAltitude = 100;
+    const treeDensity = 0.05;
+
+    // Decide where to plant
+    for(let x=0; x<map.width; x++) {
+        for(let y=0; y<map.height; y++) {
+            const i = map.width * x + y;
+            const z = map.altitude[i];
+            
+            // bell "curve" around middle of tree line
+            const diff = Math.abs((maxTreeAltitude + minTreeAltitude)/2 - z) / ((maxTreeAltitude - minTreeAltitude)/2);
+
+            const plantTree = Math.random() > diff && Math.random() < treeDensity;
+            if(plantTree) {
+                trees.push(i);
+            }
+        }
+    }
+
+    for(const tree of trees) {
+        // Layer 0, top of tree
+        map.color[tree] = hexColorToUInt32("#1E3D1E");
+        map.altitude[tree] += 2;
+
+        const colored: number[] = [];
+        const layer1 = [ 
+            tree, // tree top
+            tree - 1, tree + 1, tree - map.width, tree + map.width // orthogonal
+        ].map(n => (n + map.altitude.length) % map.altitude.length);
+
+        // Layer 1, circle around top
+        for(const i of layer1) {
+            if(!colored.includes(i)) {
+                map.color[i] = hexColorToUInt32("#1D3A1D");
+                colored.push(i);
+            }
+            colored.push(i);
+            map.altitude[i] += 4;
+        }
+
+        // Layer 2, second circle around top
+        if(Math.random() > 0.7) {
+            const layer2 = [ 
+                tree, // tree top
+                tree - 1, tree + 1, tree - map.width, tree + map.width, // orthogonal
+                tree - 1 - map.width, tree + 1 - map.width, tree - 1 + map.width, tree + 1 + map.width, // diagonal
+                tree - 2, tree + 2, tree - 2*map.width, tree + 2*map.width, // orthogonal + 1
+            ].map(n => (n + map.altitude.length) % map.altitude.length);
+    
+            for(const i of layer2) {
+                if(!colored.includes(i)) {
+                    map.color[i] = hexColorToUInt32("#1D3A1D");
+                    colored.push(i);
+                }
+                map.altitude[i] += 4;
+            }
+        }
+    }
+}
+
+function generateShadow(): void {
+    for(let x=0; x<map.width; x++) {
+        for(let y=0; y<map.height; y++) {
+            const i = map.width * x + y;
+            let color = map.color[i];
+            let z = map.altitude[i];
+            
+            color = map.altitude[(i - map.width+map.altitude.length) % map.altitude.length] > z ? interpolate(0xFF00F0000, color, 0.97) : color;
+            color = map.altitude[(i-1+map.altitude.length) % map.altitude.length] > z ? interpolate(0xFF000000, color, 0.97) : color;
+            map.color[i] = color;
         }
     }
 }
