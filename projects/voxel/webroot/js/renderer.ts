@@ -227,8 +227,8 @@ function updateCamera(): void {
         camera.angle += input.leftRight * delta;
     }
     if (input.forwardBackward != 0) {
-        camera.x -= input.forwardBackward * Math.sin(camera.angle) * delta;
-        camera.y -= input.forwardBackward * Math.cos(camera.angle) * delta;
+        camera.x = (camera.x + map.width - input.forwardBackward * Math.sin(camera.angle) * delta) % map.width;
+        camera.y = (camera.y + map.height - input.forwardBackward * Math.cos(camera.angle) * delta) % map.height;
     }
     if (input.upDown != 0) {
         camera.height += input.upDown * delta;
