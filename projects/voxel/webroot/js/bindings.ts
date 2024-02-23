@@ -283,12 +283,18 @@ async function upload(): Promise<void> {
     }
     width++;
     height++;
+
+    // Dimension is first power of two equal or greater than both height and width
+    let dimension = 1;
+    while(dimension < width && dimension < height) {
+        dimension *=2;
+    }
     
     const mapData: MapData = { 
-        altitudes: new Uint8Array(width * height), 
-        colors: new Uint32Array(width * height),
+        altitudes: new Uint8Array(dimension * dimension), 
+        colors: new Uint32Array(dimension * dimension),
         background: DEFAULT_BACKGROUND_COLOR, 
-        dimension: width 
+        dimension 
     };
 
     // Read color and altitude (z-index)
@@ -297,7 +303,7 @@ async function upload(): Promise<void> {
         const x = Number(xStr)|0;
         const y = Number(yStr)|0;
         const z = Number(zStr);
-        const i = width * x + y;
+        const i = dimension * x + y;
 
         if(z >= mapData.altitudes[i]) {
             mapData.altitudes[i] = z;
