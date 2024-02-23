@@ -18,6 +18,6 @@
   },
   "homepage": "https://github.com/dijkpah/dijkpah.github.io#readme",
   "devDependencies": {
-    "browser-sync": "^2.27.7"
+    "browser-sync": "^2.29.3"
   }
 }

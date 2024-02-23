@@ -1,0 +1,9 @@
+{
+  "main": "index.html",
+  "scripts": {
+    "build": "tsc --project tsconfig.json"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}
