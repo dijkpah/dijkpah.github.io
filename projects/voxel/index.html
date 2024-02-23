@@ -37,7 +37,7 @@
             <select name="FadeSelector" size="1" onchange="changeFade(this.value)">
                 <option value="none">None</option>
                 <option value="linear">Linear</option>
-                <option value="linear_delayed">Linear delayed</option>
+                <option selected value="linear_delayed">Linear delayed</option>
                 <option value="exponential">Exponential</option>
             </select>
             
@@ -53,12 +53,12 @@
         <section id="map">
             <h3> Map </h3>
 
-            <label>Map selector</label>
+            <label>Load map</label>
             <section>
                 <select id="mapselector" name="Mapselector" size="1" onchange="loadMap(this.value);">
-                    <option value="C1W;D1">Map C1W</option>
+                    <option selected value="C1W;D1">Comanche Mayan</option>
                     <option value="generate;rainbow">Generate rainbow</option>
-                    <option selected value="generate;landscape">Generate landscape</option>
+                    <option value="generate;landscape">Generate landscape</option>
                 </select>
                 <button onclick="loadMap(document.getElementById('mapselector').value)">Reload</button>
             </section>
