@@ -3,44 +3,78 @@
 <head>
     <title>Voxel Space project demonstration</title>
     <link type="text/css" rel="stylesheet" href="./webroot/css/style.css">
+    <link type="text/css" rel="stylesheet" href="./webroot/fonts/icomoon/style.css"></head>
 </head>
 <body scroll="no">
     <div id="fps">0.0 fps</div>
 
     <div id="info">
-        <h1>Controls</h1>
-        <div class="control"><label>Move</label>WASD/click</div>
-        <div class="control"><label>Up/down</label>R/F</div>
-        <div class="control"><label>Pitch</label>Q/E</div>
-        <br/>
-        <h4>Fade algorithm</h4>
-        <select name="FadeSelector" size="1" onchange="changeFade(this.value)">
-            <option value="none">None</option>
-            <option value="linear">Linear</option>
-            <option value="linear_delayed" selected>Linear delayed</option>
-            <option value="exponential">Exponential</option>
-        </select>
-        
-        <h4>Render distance</h4>
-        <input id="distancerange" type="range" min="100" max="5000" step="1" onchange="changeCameraDistance(this.value)" value="3000" />
-        
-        <h4>Level of detail</h4>
-        <input type="range" min="0" max="10" step="0.005" onchange="changeLOD(this.value)" value="7.75" />
+        <nav>
+            <ul>
+                <li id="menu-map"      onclick="openMenu('map')">      <span class="icon-map-o" />      </li>
+                <li id="menu-files"    onclick="openMenu('files')">    <span class="icon-file-o" />     </li>
+                <li id="menu-controls" onclick="openMenu('controls')"> <span class="icon-keyboard-o" /> </li>
+                <li id="menu-settings" onclick="openMenu('settings')"> <span class="icon-equalizer" />  </li>
+            </ul>
+        </nav>
+        <hr/>
+        <section id="controls">
+            <h3>Controls</h3>
+            
+            <label>Move</label>
+            <span class="controls">WASD/click</span>
+            
+            <label>Up/down</label>
+            <span class="controls">R/F</span>
+            
+            <label>Pitch</label>
+            <span class="controls">Q/E</span>
+        </section>
+        <section id="settings">
+            <h3> Settings </h3>
 
-        <h4>Resolution</h4>
-        <input id="lodrange" type="range" min="0.25" max="1" step="0.00005" onchange="changeResolution(this.value)" value="0.5" />
+            <label>Fade algorithm</label>
+            <select name="FadeSelector" size="1" onchange="changeFade(this.value)">
+                <option value="none">None</option>
+                <option value="linear">Linear</option>
+                <option value="linear_delayed">Linear delayed</option>
+                <option value="exponential">Exponential</option>
+            </select>
+            
+            <label>Render distance</label>
+            <input type="range" min="100" max="5000" step="1" onchange="changeCameraDistance(this.value)" value="3000" />
+            
+            <label>Level of detail</label>
+            <input type="range" min="0" max="10" step="0.005" onchange="changeLOD(this.value)" value="7.75" />
+    
+            <label>Resolution</label>
+            <input type="range" min="0.25" max="1" step="0.00005" onchange="changeResolution(this.value)" value="0.5" />
+        </section>
+        <section id="map">
+            <h3> Map </h3>
 
-        <h4>Map selector</h4>
-        <select id="map" name="Mapselector" size="1" onchange="loadMap(this.value);">
-            <option value="C1W;D1">Map C1W</option>
-            <option value="generate;rainbow">Generate rainbow</option>
-            <option selected value="generate;landscape">Generate landscape</option>
-        </select>
-        <button onclick="loadMap(document.getElementById('map').value)">Reload</button>
+            <label>Map selector</label>
+            <section>
+                <select id="mapselector" name="Mapselector" size="1" onchange="loadMap(this.value);">
+                    <option value="C1W;D1">Map C1W</option>
+                    <option value="generate;rainbow">Generate rainbow</option>
+                    <option selected value="generate;landscape">Generate landscape</option>
+                </select>
+                <button onclick="loadMap(document.getElementById('mapselector').value)">Reload</button>
+            </section>
+        </section>
+        <section id="files">
+            <h3> Files </h3>
 
-        <h4>Goxel text file</h4>
-        <input id="file" name="file" type="file" onchange="upload()" />
-        <button onclick="download()">Download</button>
+            <label>Goxel text file</label>
+            <section>
+                <label class="file-upload">
+                    <input id="file" name="file" type="file" onchange="upload()" />
+                    Upload
+                </label>                
+                <button onclick="download()">Download</button>
+            </section>
+        </section>
     </div>
 
     <canvas id="canvas">
@@ -78,7 +112,10 @@
 
         init();
         
-        loadMap("generate;landscape");
+        loadMap("C1W;D1");
+
+        // Set HTML state
+        openMenu("map");
     </script>
 </body>
 </html>

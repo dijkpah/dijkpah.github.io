@@ -1,3 +1,24 @@
+
+const menuOptions = ["map", "files", "controls",  "settings"] as const;
+let openedMenu = "map";
+
+/*******************************************************************************
+ * Menu 
+ ******************************************************************************/
+
+function openMenu(id: string): void {
+    openedMenu = id;
+
+    for(const option of menuOptions) {
+        document.getElementById(option)?.classList.remove("selected");
+        document.getElementById(`menu-${option}`)?.classList.remove("selected");
+    }
+
+    document.getElementById(id)?.classList.add("selected");
+    document.getElementById(`menu-${id}`)?.classList.add("selected");
+}
+
+
 /*******************************************************************************
  * Event handlers
  ******************************************************************************/
