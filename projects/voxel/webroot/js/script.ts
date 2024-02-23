@@ -463,12 +463,13 @@ async function downloadImagesAsync(urls: string[]): Promise<ImageData[]> {
         for(const [i, url] of urls.entries()) {
             const image = new Image();
             image.onload = function() {
+                const { width, height } = image;
                 const tempcanvas = document.createElement("canvas");
                 const tempcontext = tempcanvas.getContext("2d")!;
-                tempcanvas.width = map.width;
-                tempcanvas.height = map.height;
-                tempcontext.drawImage(image, 0, 0, map.width, map.height);
-                result[i] = tempcontext.getImageData(0, 0, map.width, map.height);
+                tempcanvas.width = width;
+                tempcanvas.height = height;
+                tempcontext.drawImage(image, 0, 0, width, height);
+                result[i] = tempcontext.getImageData(0, 0, width, height);
                 pending--;
                 if (pending === 0) {
                     resolve(result);
@@ -486,14 +487,17 @@ async function loadMap(filenames: string): Promise<void> {
 }
 
 function onLoadedImages(result: ImageData[]): void {
+    const { width, height } = result[0];
+    map.width = width;
+    map.height = height;
+    map.shift = Math.log(width)/Math.log(2);
     const color = result[0].data;
-    const height = result[1].data;
+    const altitude = result[1].data;
     for(let i=0; i<map.width*map.height; i++) {
         // Combine the RGB values into single Hex
         map.color[i] = 0xFF000000 | (color[(i<<2) + 2] << 16) | (color[(i<<2) + 1] << 8) | color[(i<<2) + 0];
-        map.altitude[i] = height[i<<2];
+        map.altitude[i] = altitude[i<<2];
     }
-    generateMap();
 }
 
 /*******************************************************************************
