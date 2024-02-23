@@ -14,7 +14,7 @@
         <div class="control"><label>Pitch</label>Q/E</div>
         <br/>
         <h4>Fade algorithm</h4>
-        <select name="FadeSelector" size="1" onchange="changeFade(this.value)" value="none">
+        <select name="FadeSelector" size="1" onchange="changeFade(this.value)" value="linear_delayed">
             <option value="none">None</option>
             <option value="linear">Linear</option>
             <option value="linear_delayed">Linear delayed</option>
@@ -22,48 +22,21 @@
         </select>
         
         <h4>Render distance</h4>
-        <input id="distancerange" type="range" min="100" max="4000" step="1" onchange="changeCameraDistance(this.value)" value="4000" />
+        <input id="distancerange" type="range" min="100" max="5000" step="1" onchange="changeCameraDistance(this.value)" value="3000" />
         
         <h4>Level of detail</h4>
         <input type="range" min="0" max="10" step="0.005" onchange="changeLOD(this.value)" value="7.75" />
 
         <h4>Resolution</h4>
-        <input id="lodrange" type="range" min="0.25" max="1" step="0.00005" onchange="changeResolution(this.value)" value="1" />
+        <input id="lodrange" type="range" min="0.25" max="1" step="0.00005" onchange="changeResolution(this.value)" value="0.5" />
 
         <h4>Map selector</h4>
-        <select name="Mapselector" size="1" onchange="loadMap(this.value);" value="C1W;D1">
+        <select id="map" name="Mapselector" size="1" onchange="loadMap(this.value);" value="C1W;D1">
             <option value="C1W;D1">Map C1W</option>
-            <option value="C2W;D2">Map C2W</option>
-            <option value="C3;D3">Map C3</option>
-            <option value="C4;D4">Map C4</option>
-            <option value="C5W;D5">Map C5W</option>
-            <option value="C6W;D6">Map C6W</option>
-            <option value="C7W;D7">Map C7W</option>
-            <option value="C8;D6">Map C8</option>
-            <option value="C9W;D9">Map C9W</option>
-            <option value="C10W;D10">Map C10W</option>
-            <option value="C11W;D11">Map C11W</option>
-            <option value="C12W;D11">Map C12W</option>
-            <option value="C13;D13">Map C13</option>
-            <option value="C14;D14">Map C14</option>
-            <option value="C14W;D14">Map C14W</option>
-            <option value="C15;D15">Map C15</option>
-            <option value="C16W;D16">Map C16W</option>
-            <option value="C17W;D17">Map C17W</option>
-            <option value="C18W;D18">Map C18W</option>
-            <option value="C19W;D19">Map C19W</option>
-            <option value="C20W;D20">Map C20W</option>
-            <option value="C21;D21">Map C21</option>
-            <option value="C22W;D22">Map C22W</option>
-            <option value="C23W;D21">Map C23W</option>
-            <option value="C24W;D24">Map C24W</option>
-            <option value="C25W;D25">Map C25W</option>
-            <option value="C26W;D18">Map C26W</option>
-            <option value="C27W;D15">Map C27W</option>
-            <option value="C28W;D25">Map C28W</option>
-            <option value="C29W;D16">Map C29W</option>
+            <option value="generate;rainbow">Generate rainbow</option>
+            <option value="generate;landscape">Generate landscape</option>
         </select>
-        <button onclick="generateMap()">Generate</button>
+        <button onclick="loadMap(document.getElementById('map').value)">Reload</button>
 
         <h4>Goxel text file</h4>
         <input id="file" name="file" type="file" onchange="upload()" />
@@ -74,6 +47,38 @@
         Your browser does not support the canvas element.
     </canvas>
 
-    <script  type='text/javascript' src="webroot/js/script.js"></script>
+    <script type='text/javascript' src="webroot/js/renderer.js"></script>
+    <script type='text/javascript' src="webroot/js/generator.js"></script>
+    <script type='text/javascript' src="webroot/js/bindings.js"></script>
+    <script type='text/javascript'>
+        function init() {    
+            
+            onResize();
+            
+            // set event handlers for keyboard, mouse, touchscreen and window resize
+            window.onkeydown = onKeyDown;
+            window.onkeyup   = onKeyUp;
+            window.onresize  = onResize;
+            CANVAS_ELEM.onmousedown  = onMouseDown;
+            CANVAS_ELEM.onmousemove  = onMouseMove;
+            CANVAS_ELEM.onmouseup    = onMouseUp;
+            CANVAS_ELEM.ontouchstart = onMouseDown;
+            CANVAS_ELEM.ontouchmove  = onMouseMove;
+            CANVAS_ELEM.ontouchend   = onMouseUp;
+            CANVAS_ELEM.style.setProperty("background", BACKGROUND_COLOR);
+            
+            window.setInterval(function(){
+                const current = new Date().getTime();
+                document.getElementById('fps').innerText = (frameCount / (current-timelastframe) * 1000).toFixed(1) + " fps";
+                frameCount = 0;
+                timelastframe = current;
+            }, 2000);
+            draw();
+        }
+
+        init();
+        
+        loadMap("generate;landscape");
+    </script>
 </body>
 </html>
