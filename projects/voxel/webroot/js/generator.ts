@@ -7,13 +7,14 @@ type AltitudeToColor = [altitude, hexColor][];
 type GeneratorConfig = {
     width: number,
     height: number,
-    colors: ABGR[], // array of length 256
+    palette: ABGR[], // array of length 256
     trees: {
         maxTreeAltitude: number,
         minTreeAltitude: number,
         treeDensity: number,
     },
     iterations: number,
+    background: hexColor,
 }
 
 /*******************************************************************************
@@ -40,8 +41,9 @@ const landscape: GeneratorConfig = {
         treeDensity: 0.05,
     },
     iterations: 5,
+    background: "#9090E0",
 
-    colors: calculatePalette([
+    palette: calculatePalette([
         [255, materials.snow],
         [250, materials.snow], 
         [150, materials.mountain],
@@ -70,8 +72,9 @@ const rainbow: GeneratorConfig = {
         treeDensity: 0
     },
     iterations: 7,
+    background: "#FFFFFF",
     
-    colors: calculatePalette([
+    palette: calculatePalette([
         // Reds
         [255, "#FFFFFF"],
         
@@ -304,42 +307,44 @@ function fBm(x: number, y: number, period: number, octaves: number): number {
  ******************************************************************************/
 
 function generateMap(config: GeneratorConfig): void {
-    const { width, height, iterations, colors } = config;
+    const { width, height, iterations, palette, background } = config;
 
-    map.altitude = new Uint8Array(width * height);
-    map.color = new Uint32Array(width * height);
-    map.width = width;
-    map.height = height;
-    map.shift = Math.log(width)/Math.log(2);
-
+    const mapData: MapData = { 
+        altitudes: new Uint8Array(width * height), 
+        colors: new Uint32Array(width * height),
+        background, 
+        dimension: width 
+    };
+    
     // Reshuffle perm
     shuffleArray(permInit);
     perm = [...permInit, ...permInit];
 
     const freq = 1/width;
     for(let x=0; x<width; x++) {
-        for(let y=0; y<map.height; y++) {
+        for(let y=0; y<height; y++) {
             const val = fBm(x*freq, y*freq, width*freq, iterations);
             var z = (val + 0.5) * 256;
             const i = width * x + y;
-            map.altitude[i] = z;
-            map.color[i] = colors[Math.floor(z)];
+            mapData.altitudes[i] = z;
+            mapData.colors[i] = palette[Math.floor(z)];
         }
     }
 
-    generateTrees(config);
-    generateShadow();    
+    generateTrees(config, mapData);
+    generateShadow(mapData);    
+    setMap(mapData);
 }
 
-function generateTrees(config: GeneratorConfig): void {
+function generateTrees(config: GeneratorConfig, { altitudes, colors, dimension }: MapData): void {
     const { maxTreeAltitude, minTreeAltitude, treeDensity } = config.trees;
     
     const trees = [];
     // Decide where to plant
-    for(let x=0; x<map.width; x++) {
-        for(let y=0; y<map.height; y++) {
-            const i = map.width * x + y;
-            const z = map.altitude[i];
+    for(let x=0; x<dimension; x++) {
+        for(let y=0; y<dimension; y++) {
+            const i = dimension * x + y;
+            const z = altitudes[i];
             
             // bell "curve" around middle of tree line
             const diff = Math.abs((maxTreeAltitude + minTreeAltitude)/2 - z) / ((maxTreeAltitude - minTreeAltitude)/2);
@@ -353,55 +358,55 @@ function generateTrees(config: GeneratorConfig): void {
 
     for(const tree of trees) {
         // Layer 0, top of tree
-        map.color[tree] = hexColorToABGR("#1E3D1E");
-        map.altitude[tree] += 2;
+        colors[tree] = hexColorToABGR("#1E3D1E");
+        altitudes[tree] += 2;
 
         const colored: number[] = [];
         const layer1 = [ 
             tree, // tree top
-            tree - 1, tree + 1, tree - map.width, tree + map.width // orthogonal
-        ].map(n => (n + map.altitude.length) % map.altitude.length);
+            tree - 1, tree + 1, tree - dimension, tree + dimension // orthogonal
+        ].map(n => (n + altitudes.length) % altitudes.length);
 
         // Layer 1, circle around top
         for(const i of layer1) {
             if(!colored.includes(i)) {
-                map.color[i] = hexColorToABGR("#1D3A1D");
+                colors[i] = hexColorToABGR("#1D3A1D");
                 colored.push(i);
             }
             colored.push(i);
-            map.altitude[i] += 4;
+            altitudes[i] += 4;
         }
 
         // Layer 2, second circle around top
         if(Math.random() > 0.7) {
             const layer2 = [ 
                 tree, // tree top
-                tree - 1, tree + 1, tree - map.width, tree + map.width, // orthogonal
-                tree - 1 - map.width, tree + 1 - map.width, tree - 1 + map.width, tree + 1 + map.width, // diagonal
-                tree - 2, tree + 2, tree - 2*map.width, tree + 2*map.width, // orthogonal + 1
-            ].map(n => (n + map.altitude.length) % map.altitude.length);
+                tree - 1, tree + 1, tree - dimension, tree + dimension, // orthogonal
+                tree - 1 - dimension, tree + 1 - dimension, tree - 1 + dimension, tree + 1 + dimension, // diagonal
+                tree - 2, tree + 2, tree - 2*dimension, tree + 2*dimension, // orthogonal + 1
+            ].map(n => (n + altitudes.length) % altitudes.length);
     
             for(const i of layer2) {
                 if(!colored.includes(i)) {
-                    map.color[i] = hexColorToABGR("#1D3A1D");
+                    colors[i] = hexColorToABGR("#1D3A1D");
                     colored.push(i);
                 }
-                map.altitude[i] += 4;
+                altitudes[i] += 4;
             }
         }
     }
 }
 
-function generateShadow(): void {
-    for(let x=0; x<map.width; x++) {
-        for(let y=0; y<map.height; y++) {
-            const i = map.width * x + y;
-            let color = map.color[i];
-            let z = map.altitude[i];
+function generateShadow({ altitudes, colors, dimension }: MapData): void {
+    for(let x=0; x<dimension; x++) {
+        for(let y=0; y<dimension; y++) {
+            const i = dimension * x + y;
+            let color = colors[i];
+            let z = altitudes[i];
             
-            color = map.altitude[(i - map.width+map.altitude.length) % map.altitude.length] > z ? interpolate(0xFF00F0000, color, 0.97) : color;
-            color = map.altitude[(i-1+map.altitude.length) % map.altitude.length] > z ? interpolate(0xFF000000, color, 0.97) : color;
-            map.color[i] = color;
+            color = altitudes[(i - dimension+altitudes.length) % altitudes.length] > z ? interpolate(0xFF00F0000, color, 0.97) : color;
+            color = altitudes[(i-1+altitudes.length) % altitudes.length] > z ? interpolate(0xFF000000, color, 0.97) : color;
+            colors[i] = color;
         }
     }
 }

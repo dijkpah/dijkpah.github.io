@@ -5,6 +5,12 @@
 type hexColor = `#${string}`;
 type altitude = number; // between 0 - 255
 type ABGR = number; // UInt32 RGBA with reverse byte order
+type MapData = {
+    altitudes: Uint8Array,
+    colors: Uint32Array,
+    background: hexColor,
+    dimension: number,
+};
 
 /*******************************************************************************
  * Constants
@@ -16,7 +22,7 @@ const CANVAS_CONTEXT = CANVAS_ELEM.getContext('2d')!;
 const INIT_IMAGE_DATA = CANVAS_CONTEXT.createImageData(CANVAS_ELEM.width, CANVAS_ELEM.height);
 const INIT_BUFF_ARR = new ArrayBuffer(INIT_IMAGE_DATA.width * INIT_IMAGE_DATA.height * 4);
 
-const BACKGROUND_COLOR: hexColor = "#9090E0";
+const DEFAULT_BACKGROUND_COLOR: hexColor = "#9090E0";
 
 // Controls --------------------------------------------------------------------
 
@@ -33,6 +39,43 @@ const KEY_LEFTRIGHT_SPEED = .05;
 const KEY_UPDOWN_SPEED = 2;
 
 /*******************************************************************************
+ * Map
+ ******************************************************************************/
+
+let _map = {
+    width:    1024,
+    height:   1024,
+    shift:    10,  // power of two: 2^10 = 1024
+    altitudes: new Uint8Array(1024*1024), // 1024 * 1024 byte array with height information
+    colors:    new Uint32Array(1024*1024), // 1024 * 1024 int array with RGB colors
+    backgroundcolor: hexColorToABGR(DEFAULT_BACKGROUND_COLOR),
+};
+
+function setMap({ altitudes, colors, background, dimension }: MapData): void {
+    if(dimension !== Math.sqrt(altitudes.length)) {
+        throw new Error("Only square maps are supported");
+    }
+
+    CANVAS_ELEM.style.setProperty("background", background);
+    _map = {
+        altitudes,
+        colors,
+        backgroundcolor: hexColorToABGR(background),
+        height: dimension,
+        width: dimension,
+        shift: Math.log(dimension)/Math.log(2),
+    }
+}
+
+function getMap(): Readonly<MapData> {
+    return {
+        altitudes: _map.altitudes,
+        colors: _map.colors,
+        dimension: _map.width,
+        background: abgrToHexColor(_map.backgroundcolor),
+    };
+}
+/*******************************************************************************
  * Variables
  ******************************************************************************/
 
@@ -47,23 +90,12 @@ const camera = {
     speed:   0.03, // camera movement speed 
 };
 
-// Landscape data --------------------------------------------------------------
-
-const map = {
-    width:    1024,
-    height:   1024,
-    shift:    10,  // power of two: 2^10 = 1024
-    altitude: new Uint8Array(1024*1024), // 1024 * 1024 byte array with height information
-    color:    new Uint32Array(1024*1024) // 1024 * 1024 int array with RGB colors
-};
-
 // Screen data -----------------------------------------------------------------
 
 const screenData = {
     imagedata: INIT_IMAGE_DATA,
     buf8:      new Uint8Array(INIT_BUFF_ARR), // the same array but with bytes
     buf32:     new Uint32Array(INIT_BUFF_ARR), // the same array but with 32-Bit words
-    backgroundcolor: hexColorToABGR(BACKGROUND_COLOR),
 };
 
 // Rendering configuration -----------------------------------------------------
@@ -94,7 +126,7 @@ let frameCount = 0;
  * Helper functions
  ******************************************************************************/
 
-function abgrToHexColor(hex: ABGR): string {
+function abgrToHexColor(hex: ABGR): hexColor {
     const padded = `00000000${hex.toString(16)}`;
     const [ b2, b1, g2, g1, r2, r1] = padded.substring(padded.length - 6);
     return `#${r2}${r1}${g2}${g1}${b2}${b1}`;
@@ -131,7 +163,7 @@ let exponentialFade = inverseExponential(255, settings.renderDistance);
 
 function drawBackground(): void {
     const buf32 = screenData.buf32;
-    const color = screenData.backgroundcolor;
+    const color = _map.backgroundcolor;
     for (let i = 0; i < buf32.length; i++) {
         buf32[i] = color;
     }
@@ -145,8 +177,8 @@ function flip(): void {
 
 /** The main render routine */
 function render(): void {
-    const mapWidthPeriod = map.width - 1;
-    const mapHeightPeriod = map.height - 1;
+    const mapWidthPeriod = _map.width - 1;
+    const mapHeightPeriod = _map.height - 1;
     
     const screenWidth = CANVAS_ELEM.width;
     const scaleHeight = screenWidth / 2;
@@ -180,8 +212,8 @@ function render(): void {
         
         for(let x=0; x < screenWidth; x++) {
             
-            const mapOffset = ((ply & mapWidthPeriod) << map.shift) + (plx & mapHeightPeriod);
-            const heightOnScreen = (camera.height - map.altitude[mapOffset]) * invZ + camera.horizon;
+            const mapOffset = ((ply & mapWidthPeriod) << _map.shift) + (plx & mapHeightPeriod);
+            const heightOnScreen = (camera.height - _map.altitudes[mapOffset]) * invZ + camera.horizon;
 
             const yTop = Math.max(heightOnScreen | 0, 0);
             const yBottom = hiddenY[x];
@@ -192,7 +224,7 @@ function render(): void {
                 let offset = ((yTop * screenWidth) + x);
                 for (let k = yTop; k < yBottom; k++) {
                     // Linear fade to background color using mask
-                    buf32[offset] = mask & map.color[mapOffset];
+                    buf32[offset] = mask & _map.colors[mapOffset];
                     offset = offset + screenWidth;
                 }
             }
@@ -227,8 +259,8 @@ function updateCamera(): void {
         camera.angle += input.leftRight * delta;
     }
     if (input.forwardBackward != 0) {
-        camera.x = (camera.x + map.width - input.forwardBackward * Math.sin(camera.angle) * delta) % map.width;
-        camera.y = (camera.y + map.height - input.forwardBackward * Math.cos(camera.angle) * delta) % map.height;
+        camera.x = (camera.x + _map.width - input.forwardBackward * Math.sin(camera.angle) * delta) % _map.width;
+        camera.y = (camera.y + _map.height - input.forwardBackward * Math.cos(camera.angle) * delta) % _map.height;
     }
     if (input.upDown != 0) {
         camera.height += input.upDown * delta;
@@ -238,9 +270,9 @@ function updateCamera(): void {
     }
     
     // Collision detection. Don't fly below the surface.
-    const mapoffset = ((Math.floor(camera.y) & (map.width-1)) << map.shift) + (Math.floor(camera.x) & (map.height-1));
-    if ((map.altitude[mapoffset]+10) > camera.height) {
-        camera.height = map.altitude[mapoffset] + 10;
+    const mapoffset = ((Math.floor(camera.y) & (_map.width-1)) << _map.shift) + (Math.floor(camera.x) & (_map.height-1));
+    if ((_map.altitudes[mapoffset]+10) > camera.height) {
+        camera.height = _map.altitudes[mapoffset] + 10;
     }
     
     time = current;

@@ -241,16 +241,22 @@ async function loadMap(filenames: string): Promise<void> {
 
 function onLoadedImages(result: ImageData[]): void {
     const { width, height } = result[0];
-    map.width = width;
-    map.height = height;
-    map.shift = Math.log(width)/Math.log(2);
-    const color = result[0].data;
-    const altitude = result[1].data;
-    for(let i=0; i<map.width*map.height; i++) {
+    const colorImage = result[0].data;
+    const altitudeImage = result[1].data;
+
+    const mapData: MapData = { 
+        altitudes: new Uint8Array(width * height), 
+        colors: new Uint32Array(width * height),
+        background: DEFAULT_BACKGROUND_COLOR, 
+        dimension: width 
+    };
+
+    for(let i=0; i<width*height; i++) {
         // Combine the RGB values into single Hex
-        map.color[i] = 0xFF000000 | (color[(i<<2) + 2] << 16) | (color[(i<<2) + 1] << 8) | color[(i<<2) + 0];
-        map.altitude[i] = altitude[i<<2];
+        mapData.colors[i] = 0xFF000000 | (colorImage[(i<<2) + 2] << 16) | (colorImage[(i<<2) + 1] << 8) | colorImage[(i<<2) + 0];
+        mapData.altitudes[i] = altitudeImage[i<<2];
     }
+    setMap(mapData); 
 }
 
 /*******************************************************************************
@@ -277,13 +283,15 @@ async function upload(): Promise<void> {
     }
     width++;
     height++;
+    
+    const mapData: MapData = { 
+        altitudes: new Uint8Array(width * height), 
+        colors: new Uint32Array(width * height),
+        background: DEFAULT_BACKGROUND_COLOR, 
+        dimension: width 
+    };
 
-    map.altitude = new Uint8Array(width * height);
-    map.color = new Uint32Array(width * height);
-    map.width = width;
-    map.height = height;
-    map.shift = Math.log(width)/Math.log(2);
-
+    // Read color and altitude (z-index)
     for(const voxel of voxels) {
         const [xStr, yStr, zStr, rrggbb] = voxel.split(" ");
         const x = Number(xStr)|0;
@@ -291,30 +299,31 @@ async function upload(): Promise<void> {
         const z = Number(zStr);
         const i = width * x + y;
 
-        if(z >= map.altitude[i]) {
-            map.altitude[i] = z;
-            map.color[i] = hexColorToABGR(`#${rrggbb}`);
+        if(z >= mapData.altitudes[i]) {
+            mapData.altitudes[i] = z;
+            mapData.colors[i] = hexColorToABGR(`#${rrggbb}`);
         }
     }
+    setMap(mapData); 
 }
 
 function download(): void {
     // Create goxel text file
     let data = "";
-    const { width, height } = map;
-    for(let x=0; x<width; x++) {
-        for(let y=0; y<height; y++){
-            const color = map.color[width * x + y].toString(16);
+    const { dimension, colors, altitudes } = getMap();
+    for(let x=0; x<dimension; x++) {
+        for(let y=0; y<dimension; y++){
+            const color = colors[dimension * x + y].toString(16);
             const [_a1, _a2, b1, b2, g1, g2, r1, r2] = color;
-            const altitude = map.altitude[width * x + y];
+            const altitude = altitudes[dimension * x + y];
             data += `${x} ${y} ${altitude} ${r1}${r2}${g1}${g2}${b1}${b2}\r\n`;
 
             // Fill gaps between highest voxel and neighbours
             const lowestNeighbour = Math.min(...[
-                map.altitude[width * x + y + 1] ?? -1,
-                map.altitude[width * x + y - 1] ?? -1,
-                map.altitude[width * (x+1) + y] ?? -1,
-                map.altitude[width * (x-1) + y] ?? -1,
+                altitudes[dimension * x + y + 1] ?? -1,
+                altitudes[dimension * x + y - 1] ?? -1,
+                altitudes[dimension * (x+1) + y] ?? -1,
+                altitudes[dimension * (x-1) + y] ?? -1,
             ]);
             for(let z=altitude - 1; z >=0 && z > lowestNeighbour; z--) {
                 data += `${x} ${y} ${z} ${r1}${r2}${g1}${g2}${b1}${b2}\r\n`;
