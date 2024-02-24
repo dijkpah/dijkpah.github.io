@@ -355,7 +355,7 @@ async function generateMap(config: GeneratorConfig, name: string): Promise<void>
     for(let x=0; x<width; x++) {
         for(let y=0; y<height; y++) {
             const val = fBm(x*freq, y*freq, width*freq, iterations);
-            var z = (val + 0.5) * 256;
+            var z = Math.min(255, (val + 0.5) * 255);
             const i = width * x + y;
             mapData.altitudes[i] = z;
             mapData.colors[i] = palette[Math.floor(z)];
