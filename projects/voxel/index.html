@@ -66,13 +66,18 @@
         <section id="files">
             <h3> Files </h3>
 
+            <label>Image file</label>
+            <section>
+                <button onclick="downloadImages()">Download color map</button>
+            </section>
+
             <label>Goxel text file</label>
             <section>
                 <label class="file-upload">
-                    <input id="file" name="file" type="file" onchange="upload()" />
+                    <input id="file" name="file" type="file" onchange="uploadGoxel()" />
                     Upload
                 </label>                
-                <button onclick="download()">Download</button>
+                <button onclick="downloadGoxel()">Download</button>
             </section>
         </section>
     </div>

@@ -6,6 +6,7 @@ type hexColor = `#${string}`;
 type altitude = number; // between 0 - 255
 type ABGR = number; // UInt32 RGBA with reverse byte order
 type MapData = {
+    name: string,
     altitudes: Uint8Array,
     colors: Uint32Array,
     background: hexColor,
@@ -43,21 +44,23 @@ const KEY_UPDOWN_SPEED = 2;
  ******************************************************************************/
 
 let _map = {
-    width:    1024,
-    height:   1024,
-    shift:    10,  // power of two: 2^10 = 1024
-    altitudes: new Uint8Array(1024*1024), // 1024 * 1024 byte array with height information
+    name: "",
+    width: 1024,
+    height: 1024,
+    shift: 10,  // power of two: 2^10 = 1024
+    altitudes: new Uint8Array( 1024*1024), // 1024 * 1024 byte array with height information
     colors:    new Uint32Array(1024*1024), // 1024 * 1024 int array with RGB colors
     backgroundcolor: hexColorToABGR(DEFAULT_BACKGROUND_COLOR),
 };
 
-function setMap({ altitudes, colors, background, dimension }: MapData): void {
+function setMap({ altitudes, colors, background, dimension, name }: MapData): void {
     if(dimension !== Math.sqrt(altitudes.length)) {
         throw new Error("Only square maps are supported");
     }
 
     CANVAS_ELEM.style.setProperty("background", background);
     _map = {
+        name,
         altitudes,
         colors,
         backgroundcolor: hexColorToABGR(background),
@@ -69,6 +72,7 @@ function setMap({ altitudes, colors, background, dimension }: MapData): void {
 
 function getMap(): Readonly<MapData> {
     return {
+        name: _map.name,
         altitudes: _map.altitudes,
         colors: _map.colors,
         dimension: _map.width,

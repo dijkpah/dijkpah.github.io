@@ -306,10 +306,11 @@ function fBm(x: number, y: number, period: number, octaves: number): number {
  * Map generator functions
  ******************************************************************************/
 
-function generateMap(config: GeneratorConfig): void {
+function generateMap(config: GeneratorConfig, name: string): void {
     const { width, height, iterations, palette, background } = config;
 
     const mapData: MapData = { 
+        name,
         altitudes: new Uint8Array(width * height), 
         colors: new Uint32Array(width * height),
         background, 

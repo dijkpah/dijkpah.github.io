@@ -18,7 +18,6 @@ function openMenu(id: string): void {
     document.getElementById(`menu-${id}`)?.classList.add("selected");
 }
 
-
 /*******************************************************************************
  * Event handlers
  ******************************************************************************/
@@ -192,11 +191,31 @@ function changeResolution(val: number) {
 }
 
 /*******************************************************************************
+ * Map selection
+ ******************************************************************************/
+
+async function loadMap(filenames: string): Promise<void> {
+    const files = filenames.split(";");
+
+    if(files[0] === "generate") {
+        const name = files[1];
+        switch(name) {
+            case "rainbow": generateMap(rainbow, name); break;
+            case "landscape": generateMap(landscape, name); break;
+        }
+    } else {   
+        const name = files[0];
+        const result = await loadImagesAsync([`maps/${files[0]}.png`, `maps/${files[1]}.png`]);
+        onLoadedImages(result, name);
+    }
+}
+
+/*******************************************************************************
  * Image loaders
  ******************************************************************************/
 
 /** Downloads the png */
-async function downloadImagesAsync(urls: string[]): Promise<ImageData[]> {
+async function loadImagesAsync(urls: string[]): Promise<ImageData[]> {
     return new Promise(function(resolve, _reject) {
         
         var pending = urls.length;
@@ -225,26 +244,14 @@ async function downloadImagesAsync(urls: string[]): Promise<ImageData[]> {
     });
 }
 
-async function loadMap(filenames: string): Promise<void> {
-    const files = filenames.split(";");
-
-    if(files[0] === "generate") {
-        switch(files[1]) {
-            case "rainbow": generateMap(rainbow); break;
-            case "landscape": generateMap(landscape); break;
-        }
-    } else {   
-        const result = await downloadImagesAsync([`maps/${files[0]}.png`, `maps/${files[1]}.png`]);
-        onLoadedImages(result);
-    }
-}
-
-function onLoadedImages(result: ImageData[]): void {
+function onLoadedImages(result: ImageData[], name: string): void {
     const { width, height } = result[0];
     const colorImage = result[0].data;
     const altitudeImage = result[1].data;
+    console.log(altitudeImage.byteLength, altitudeImage.buffer.byteLength);
 
-    const mapData: MapData = { 
+    const mapData: MapData = {
+        name,
         altitudes: new Uint8Array(width * height), 
         colors: new Uint32Array(width * height),
         background: DEFAULT_BACKGROUND_COLOR, 
@@ -259,15 +266,57 @@ function onLoadedImages(result: ImageData[]): void {
     setMap(mapData); 
 }
 
+function downloadImages(): void {
+    const { dimension, colors, altitudes, name } = getMap();
+
+    var tmpCanvas = document.createElement('canvas');
+    var tmpCtx = tmpCanvas.getContext('2d');
+    tmpCanvas.width = dimension;
+    tmpCanvas.height = dimension;
+
+    // Create color map image
+    let imgData = new ImageData(dimension, dimension);
+    imgData.data.set(new Uint8ClampedArray(colors.buffer));
+    tmpCtx?.putImageData(imgData, 0, 0);
+    const colorMap = tmpCanvas.toDataURL("image/png")
+
+    // Create height map image
+    const buff = new ArrayBuffer(dimension * dimension * 4);
+    const buf8 = new Uint8ClampedArray(buff);
+
+    for(let i=0; i<dimension*dimension; i++) {
+        const j = i<<2;
+        buf8[j] = altitudes[i]; //R
+        buf8[j+1] = altitudes[i]; //G
+        buf8[j+2] = altitudes[i]; //B
+        buf8[j+3] = 255; //A
+    }
+    imgData.data.set(buf8);
+    tmpCtx?.putImageData(imgData, 0, 0);
+    const heightMap = tmpCanvas.toDataURL("image/png");
+
+    // Download maps
+    var element = document.createElement('a');
+    for(const [fileName, map] of [ [`${name}_color`, colorMap], [`${name}_height`, heightMap]]) {
+        element.setAttribute('href', map);
+        element.setAttribute('download', `${fileName}.png`);
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    }
+}
+
 /*******************************************************************************
  * Goxel file handling
  ******************************************************************************/
 
-async function upload(): Promise<void> {
+async function uploadGoxel(): Promise<void> {
     const input = document.getElementById("file") as HTMLInputElement;
-    
+    const file = input.files![0];
+
     // X Y Z RRGGBB
-    const voxels = (await input.files![0].text())
+    const voxels = (await file.text())
         .split("\r\n")
         .filter(voxel => voxel.trim().length > 0 && voxel[0] !== "#");
 
@@ -291,6 +340,7 @@ async function upload(): Promise<void> {
     }
     
     const mapData: MapData = { 
+        name: file.name.split(".")[0],
         altitudes: new Uint8Array(dimension * dimension), 
         colors: new Uint32Array(dimension * dimension),
         background: DEFAULT_BACKGROUND_COLOR, 
@@ -313,7 +363,7 @@ async function upload(): Promise<void> {
     setMap(mapData); 
 }
 
-function download(): void {
+function downloadGoxel(): void {
     // Create goxel text file
     let data = "";
     const { dimension, colors, altitudes } = getMap();
