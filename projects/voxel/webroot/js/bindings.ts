@@ -213,6 +213,11 @@ async function loadMap(filenames: string): Promise<void> {
     } else if(type === "map") {
         const [colorData, heightData] = await loadImagesAsync([`maps/${name}_color.png`, `maps/${name}_height.png`]);
         const map = imagesToMapData(colorData, heightData, name);
+        if(name === "retrowave") {
+            map.sun = "#000000";
+            map.background = "#F5386E";
+            settings.background = sunLineBackground;
+        }
         setMap(map);
     } else if(type === "model") {
         const [colorData, heightData] = await loadImagesAsync([`models/${name}_color.png`, `models/${name}_height.png`]);
