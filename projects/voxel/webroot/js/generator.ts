@@ -17,6 +17,15 @@ type GeneratorConfig = {
     background: hexColor,
 }
 
+type ModelDimensions = {
+    height: number,
+    width: number,
+}
+
+type ModelData = ModelDimensions &  {
+    colors: Uint32Array,
+    altitudes: Uint8Array,
+}
 /*******************************************************************************
  * Material and layer templates
  ******************************************************************************/
@@ -198,6 +207,23 @@ const rainbow: GeneratorConfig = {
         [0, "#A09FE1"],
     ])
 };
+
+/*******************************************************************************
+ * Models
+ ******************************************************************************/
+
+const models = {
+    boat: {
+        width: 32,
+        height: 32,
+    }
+} as const satisfies Record<string, ModelDimensions>;
+
+async function loadModel(name: keyof typeof models): Promise<ModelData> {
+    const result = await loadImagesAsync([`models/${name}_color.png`, `models/${name}_height.png`]);
+    const { colors, altitudes } = imagesToMapData(result[0], result[1], name);
+    return { ...models[name], colors, altitudes };
+}
 
 /*******************************************************************************
  * Color functions
@@ -401,7 +427,7 @@ function generateTrees(config: GeneratorConfig, { altitudes, colors, dimension }
 function generateShadow({ altitudes, colors, dimension }: MapData): void {
     for(let x=0; x<dimension; x++) {
         for(let y=0; y<dimension; y++) {
-            const i = dimension * x + y;
+            const i = x + y * dimension;
             let color = colors[i];
             let z = altitudes[i];
             

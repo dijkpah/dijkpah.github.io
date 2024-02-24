@@ -196,17 +196,20 @@ function changeResolution(val: number) {
 
 async function loadMap(filenames: string): Promise<void> {
     const files = filenames.split(";");
+    const [ type, name ] = files;
 
-    if(files[0] === "generate") {
-        const name = files[1];
+    if(type === "generate") {
         switch(name) {
             case "rainbow": generateMap(rainbow, name); break;
             case "landscape": generateMap(landscape, name); break;
         }
-    } else {   
-        const name = files[0];
-        const result = await loadImagesAsync([`maps/${files[0]}.png`, `maps/${files[1]}.png`]);
-        const map = imagesToMapData(result[0], result[1], name);
+    } else if(type === "map") {
+        const [colorData, heightData] = await loadImagesAsync([`maps/${name}_color.png`, `maps/${name}_height.png`]);
+        const map = imagesToMapData(colorData, heightData, name);
+        setMap(map);
+    } else if(type === "model") {
+        const [colorData, heightData] = await loadImagesAsync([`models/${name}_color.png`, `models/${name}_height.png`]);
+        const map = imagesToMapData(colorData, heightData, name);
         setMap(map);
     }
 }
@@ -260,7 +263,7 @@ function imagesToMapData(colorData: ImageData, heightData: ImageData, name: stri
 
     for(let i=0; i<width*height; i++) {
         // Combine the RGB values into single Hex
-        mapData.colors[i] = 0xFF000000 | (colorImage[(i<<2) + 2] << 16) | (colorImage[(i<<2) + 1] << 8) | colorImage[(i<<2) + 0];
+        mapData.colors[i] = (colorImage[(i<<2) + 3] << 24) | (colorImage[(i<<2) + 2] << 16) | (colorImage[(i<<2) + 1] << 8) | colorImage[(i<<2) + 0];
         mapData.altitudes[i] = altitudeImage[i<<2];
     }
     return mapData; 
@@ -284,9 +287,9 @@ function downloadImages(): void {
     var tmpCtx = tmpCanvas.getContext('2d');
     tmpCanvas.width = dimension;
     tmpCanvas.height = dimension;
+    let imgData = new ImageData(dimension, dimension);
 
     // Create color map image
-    let imgData = new ImageData(dimension, dimension);
     imgData.data.set(new Uint8ClampedArray(colors.buffer));
     tmpCtx?.putImageData(imgData, 0, 0);
     const colorMap = tmpCanvas.toDataURL("image/png")
@@ -307,8 +310,8 @@ function downloadImages(): void {
     const heightMap = tmpCanvas.toDataURL("image/png");
 
     // Download maps
-    var element = document.createElement('a');
     for(const [fileName, map] of [ [`${name}_color`, colorMap], [`${name}_height`, heightMap]]) {
+        const element = document.createElement('a');
         element.setAttribute('href', map);
         element.setAttribute('download', `${fileName}.png`);
         element.style.display = 'none';

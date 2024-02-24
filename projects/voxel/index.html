@@ -56,7 +56,9 @@
             <label>Load map</label>
             <section>
                 <select id="mapselector" size="1" onchange="loadMap(this.value);">
-                    <option selected value="C1W;D1">Comanche Mayan</option>
+                    <option selected value="map;comanche_mayan">Comanche Mayan</option>
+                    <option value="model;boat">Boat</option>
+                    <option value="model;castle">Castle</option>
                     <option value="generate;rainbow">Generate rainbow</option>
                     <option value="generate;landscape">Generate landscape</option>
                 </select>
@@ -124,7 +126,7 @@
 
         init();
         
-        loadMap("C1W;D1");
+        loadMap("map;comanche_mayan");
 
         // Set HTML state
         openMenu("map");
