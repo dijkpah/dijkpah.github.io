@@ -405,8 +405,8 @@ function generateShadow({ altitudes, colors, dimension }: MapData): void {
             let color = colors[i];
             let z = altitudes[i];
             
-            color = altitudes[(i - dimension+altitudes.length) % altitudes.length] > z ? interpolate(0xFF00F0000, color, 0.97) : color;
-            color = altitudes[(i-1+altitudes.length) % altitudes.length] > z ? interpolate(0xFF000000, color, 0.97) : color;
+            color = altitudes[(i - dimension+altitudes.length) % altitudes.length] > z ? interpolate(color, 0xFF000000, 0.03) : color;
+            color = altitudes[(i-1+altitudes.length) % altitudes.length] > z ? interpolate(color, 0xFF000000, 0.03) : color;
             colors[i] = color;
         }
     }
