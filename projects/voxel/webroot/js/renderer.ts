@@ -10,6 +10,7 @@ type MapData = {
     altitudes: Uint8Array,
     colors: Uint32Array,
     background: hexColor,
+    sun: hexColor,
     dimension: number,
 };
 
@@ -24,6 +25,7 @@ const INIT_IMAGE_DATA = CANVAS_CONTEXT.createImageData(CANVAS_ELEM.width, CANVAS
 const INIT_BUFF_ARR = new ArrayBuffer(INIT_IMAGE_DATA.width * INIT_IMAGE_DATA.height * 4);
 
 const DEFAULT_BACKGROUND_COLOR: hexColor = "#9090E0";
+const DEFAULT_SUN_COLOR: hexColor = "#FFFFFF";
 
 // Controls --------------------------------------------------------------------
 
@@ -50,10 +52,11 @@ let _map = {
     shift: 10,  // power of two: 2^10 = 1024
     altitudes: new Uint8Array( 1024*1024), // 1024 * 1024 byte array with height information
     colors:    new Uint32Array(1024*1024), // 1024 * 1024 int array with RGB colors
-    backgroundcolor: hexColorToABGR(DEFAULT_BACKGROUND_COLOR),
+    backgroundColor: hexColorToABGR(DEFAULT_BACKGROUND_COLOR),
+    sunColor: hexColorToABGR(DEFAULT_SUN_COLOR),
 };
 
-function setMap({ altitudes, colors, background, dimension, name }: MapData): void {
+function setMap({ altitudes, colors, background, sun, dimension, name }: MapData): void {
     if(dimension !== Math.sqrt(altitudes.length)) {
         throw new Error("Only square maps are supported");
     }
@@ -63,7 +66,8 @@ function setMap({ altitudes, colors, background, dimension, name }: MapData): vo
         name,
         altitudes,
         colors,
-        backgroundcolor: hexColorToABGR(background),
+        backgroundColor: hexColorToABGR(background),
+        sunColor: hexColorToABGR(sun),
         height: dimension,
         width: dimension,
         shift: Math.log(dimension)/Math.log(2),
@@ -76,7 +80,8 @@ function getMap(): Readonly<MapData> {
         altitudes: _map.altitudes,
         colors: _map.colors,
         dimension: _map.width,
-        background: abgrToHexColor(_map.backgroundcolor),
+        background: abgrToHexColor(_map.backgroundColor),
+        sun: abgrToHexColor(_map.sunColor),
     };
 }
 /*******************************************************************************
@@ -88,9 +93,9 @@ function getMap(): Readonly<MapData> {
 const camera = {
     x:        -7024, // x position on the map
     y:        -14835, // y position on the map
-    angle:      0.9, // direction of the camera
-    height:    378, // height of the camera
-    horizon:   0, // horizon position (look up and down)
+    angle:      0, // direction of the camera
+    height:    400, // height of the camera
+    horizon:   60, // horizon position (look up and down), number of pixels on canvas from top of screen
     speed:   0.03, // camera movement speed 
 };
 
@@ -109,6 +114,7 @@ const settings = {
     lodInv: 0.0015,
     fade: linearDelayedFade,
     renderDistance: 3000,
+    background: sunPointBackground
 }
 
 // Input data ------------------------------------------------------------------
@@ -162,16 +168,68 @@ function linearDelayedFade (z: number): number {
 let exponentialFade = inverseExponential(255, settings.renderDistance);
 
 /*******************************************************************************
- * Rendering functions
+ * Backgrounds 
  ******************************************************************************/
 
-function drawBackground(): void {
+function monochromeBackground(): void {
     const buf32 = screenData.buf32;
-    const color = _map.backgroundcolor;
+    const color = _map.backgroundColor;
     for (let i = 0; i < buf32.length; i++) {
         buf32[i] = color;
     }
 }
+
+function sunLineBackground(): void {
+    const buf32 = screenData.buf32;
+    const { backgroundColor, sunColor } = _map;
+    const { width } = screenData.imagedata;
+
+    // sin(a) has shape of sin(x), convert to shape of, cos(x) and map to 0-1
+    const horizontalFactor = (Math.cos(-camera.angle)/2 + 0.5);
+    const horizon = Math.floor(camera.horizon);
+
+    for (let i = width * horizon; i < buf32.length; i++) {
+        buf32[i] = backgroundColor;
+    }
+    for(let y=0; y <= horizon; y++) {
+        // screen fade between top and horizon
+        const fadeColor = interpolate(backgroundColor, sunColor, horizontalFactor * (1 -(y/horizon)));
+        for(let x=0; x< width; x++) {
+            const i = (x + y* width);
+            buf32[i] = fadeColor;
+        }
+    }
+}
+
+function sunPointBackground(): void {
+    const buf32 = screenData.buf32;
+    const { backgroundColor, sunColor } = _map;
+    const { width } = screenData.imagedata;
+
+    
+    const horizon = Math.floor(camera.horizon);
+    const deg45 = Math.PI / 4;
+    const deg90 = 2*deg45;
+
+    for (let i = width * horizon; i < buf32.length; i++) {
+        buf32[i] = backgroundColor;
+    }
+    for(let x=0; x< width; x++) {
+        const horizontalFactor = (Math.cos(-camera.angle - deg45 + deg90*x/width)/2 + 0.5)**5
+        for(let y=0; y < horizon; y++) {
+            // screen fade between top and horizon
+            const verticalFactor = 1-(y/horizon);
+            const fadeColor = interpolate(backgroundColor, sunColor, horizontalFactor * verticalFactor);
+            const i = (x + y* width);
+            buf32[i] = fadeColor;
+        }
+    }
+}
+/*******************************************************************************
+ * Rendering functions
+ ******************************************************************************/
+
+const drawBackground = sunLineBackground;
 
 /** Show the back buffer on screen */
 function flip(): void {
@@ -247,7 +305,7 @@ function render(): void {
 /** Draws the next frame */
 function draw(): void {
     updateCamera();
-    drawBackground();
+    settings.background();
     render();
     flip();
     frameCount++;

@@ -41,6 +41,13 @@
                 <option value="exponential">Exponential</option>
             </select>
             
+            <label>Background</label>
+            <select size="1" onchange="changeBackground(this.value)">
+                <option value="monochrome">Monochrome</option>
+                <option value="sun_line">Sun line</option>
+                <option selected value="sun_point">Sun point</option>
+            </select>
+
             <label>Render distance</label>
             <input type="range" min="100" max="5000" step="1" onchange="changeCameraDistance(this.value)" value="3000" />
             

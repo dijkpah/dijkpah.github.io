@@ -180,6 +180,14 @@ function changeFade(name: string): void {
     }
 }
 
+function changeBackground(name: string): void {
+    switch(name) {
+        case "monochrome": settings.background = monochromeBackground; break;
+        case "sun_line": settings.background = sunLineBackground; break;
+        case "sun_point": settings.background = sunPointBackground; break;
+    }
+}
+
 function changeLOD(val: number) {
     // enforces number between 0.00666666 and 0
     settings.lodInv = 1 - (1490 +  Number(val)) / 1500;
@@ -258,6 +266,7 @@ function imagesToMapData(colorData: ImageData, heightData: ImageData, name: stri
         altitudes: new Uint8Array(width * height), 
         colors: new Uint32Array(width * height),
         background: DEFAULT_BACKGROUND_COLOR, 
+        sun: DEFAULT_SUN_COLOR,
         dimension: width 
     };
 
@@ -356,6 +365,7 @@ async function uploadGoxel(file: File): Promise<void> {
         altitudes: new Uint8Array(dimension * dimension), 
         colors: new Uint32Array(dimension * dimension),
         background: DEFAULT_BACKGROUND_COLOR, 
+        sun: DEFAULT_SUN_COLOR,
         dimension 
     };
 

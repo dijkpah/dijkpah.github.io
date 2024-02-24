@@ -15,6 +15,7 @@ type GeneratorConfig = {
     },
     iterations: number,
     background: hexColor,
+    sun: hexColor,
 }
 
 type ModelDimensions = {
@@ -50,7 +51,8 @@ const landscape: GeneratorConfig = {
         treeDensity: 0.05,
     },
     iterations: 5,
-    background: "#9090E0",
+    background: DEFAULT_BACKGROUND_COLOR,
+    sun: DEFAULT_SUN_COLOR,
 
     palette: calculatePalette([
         [255, materials.snow],
@@ -82,6 +84,7 @@ const rainbow: GeneratorConfig = {
     },
     iterations: 7,
     background: "#FFFFFF",
+    sun: DEFAULT_SUN_COLOR,
     
     palette: calculatePalette([
         // Reds
@@ -332,15 +335,16 @@ function fBm(x: number, y: number, period: number, octaves: number): number {
  * Map generator functions
  ******************************************************************************/
 
-function generateMap(config: GeneratorConfig, name: string): void {
-    const { width, height, iterations, palette, background } = config;
+async function generateMap(config: GeneratorConfig, name: string): Promise<void> {
+    const { width, height, iterations, palette, background, sun } = config;
 
     const mapData: MapData = { 
         name,
         altitudes: new Uint8Array(width * height), 
         colors: new Uint32Array(width * height),
         background, 
-        dimension: width 
+        dimension: width,
+        sun,
     };
     
     // Reshuffle perm
