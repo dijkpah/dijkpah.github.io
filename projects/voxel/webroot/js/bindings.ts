@@ -217,6 +217,10 @@ async function loadMap(filenames: string): Promise<void> {
             map.sun = "#000000";
             map.background = "#F5386E";
             settings.background = sunLineBackground;
+        } else if(name === "clouds") {
+            map.sun = "#427296";
+            map.background = "#FFFFFF";
+            settings.background = sunLineBackground;
         }
         setMap(map);
     } else if(type === "model") {
