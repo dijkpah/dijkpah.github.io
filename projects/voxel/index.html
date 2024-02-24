@@ -34,7 +34,7 @@
             <h3> Settings </h3>
 
             <label>Fade algorithm</label>
-            <select name="FadeSelector" size="1" onchange="changeFade(this.value)">
+            <select size="1" onchange="changeFade(this.value)">
                 <option value="none">None</option>
                 <option value="linear">Linear</option>
                 <option selected value="linear_delayed">Linear delayed</option>
@@ -55,7 +55,7 @@
 
             <label>Load map</label>
             <section>
-                <select id="mapselector" name="Mapselector" size="1" onchange="loadMap(this.value);">
+                <select id="mapselector" size="1" onchange="loadMap(this.value);">
                     <option selected value="C1W;D1">Comanche Mayan</option>
                     <option value="generate;rainbow">Generate rainbow</option>
                     <option value="generate;landscape">Generate landscape</option>
@@ -68,13 +68,21 @@
 
             <label>Image file</label>
             <section>
-                <button onclick="downloadImages()">Download color map</button>
+                <label class="file-upload">
+                    <input id="colorFile" type="file" onchange="uploadImage()" accept=".png" />
+                    Upload color map
+                </label>   
+                <label class="file-upload">
+                    <input id="heightFile" type="file" onchange="uploadImage()" accept=".png" />
+                    Upload height map
+                </label>   
+                <button onclick="downloadImages()">Download</button>
             </section>
 
             <label>Goxel text file</label>
             <section>
                 <label class="file-upload">
-                    <input id="file" name="file" type="file" onchange="uploadGoxel()" />
+                    <input type="file" onchange="uploadGoxel(this.files[0])" accept=".txt" />
                     Upload
                 </label>                
                 <button onclick="downloadGoxel()">Download</button>

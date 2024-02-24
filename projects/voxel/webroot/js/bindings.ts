@@ -206,7 +206,8 @@ async function loadMap(filenames: string): Promise<void> {
     } else {   
         const name = files[0];
         const result = await loadImagesAsync([`maps/${files[0]}.png`, `maps/${files[1]}.png`]);
-        onLoadedImages(result, name);
+        const map = imagesToMapData(result[0], result[1], name);
+        setMap(map);
     }
 }
 
@@ -244,11 +245,10 @@ async function loadImagesAsync(urls: string[]): Promise<ImageData[]> {
     });
 }
 
-function onLoadedImages(result: ImageData[], name: string): void {
-    const { width, height } = result[0];
-    const colorImage = result[0].data;
-    const altitudeImage = result[1].data;
-    console.log(altitudeImage.byteLength, altitudeImage.buffer.byteLength);
+function imagesToMapData(colorData: ImageData, heightData: ImageData, name: string): MapData {
+    const { width, height } = colorData;
+    const colorImage = colorData.data;
+    const altitudeImage = heightData.data;
 
     const mapData: MapData = {
         name,
@@ -263,7 +263,18 @@ function onLoadedImages(result: ImageData[], name: string): void {
         mapData.colors[i] = 0xFF000000 | (colorImage[(i<<2) + 2] << 16) | (colorImage[(i<<2) + 1] << 8) | colorImage[(i<<2) + 0];
         mapData.altitudes[i] = altitudeImage[i<<2];
     }
-    setMap(mapData); 
+    return mapData; 
+}
+
+async function uploadImage(): Promise<void> {
+    const colorFile = (document.getElementById("colorFile") as HTMLInputElement).files![0];
+    const heightFile = (document.getElementById("heightFile") as HTMLInputElement).files![0]
+
+    if(colorFile && heightFile) {
+        const [ colorData, heightData ] = await loadImagesAsync([URL.createObjectURL(colorFile), URL.createObjectURL(heightFile)]) ;
+        const mapData = imagesToMapData(colorData, heightData, colorFile.name.split(".")[0]);
+        setMap(mapData);
+    }
 }
 
 function downloadImages(): void {
@@ -311,9 +322,7 @@ function downloadImages(): void {
  * Goxel file handling
  ******************************************************************************/
 
-async function uploadGoxel(): Promise<void> {
-    const input = document.getElementById("file") as HTMLInputElement;
-    const file = input.files![0];
+async function uploadGoxel(file: File): Promise<void> {
 
     // X Y Z RRGGBB
     const voxels = (await file.text())
