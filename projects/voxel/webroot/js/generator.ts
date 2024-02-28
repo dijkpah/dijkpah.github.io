@@ -349,6 +349,8 @@ async function generateHalo(): Promise<void> {
 
     const mapData = generateMap(landscape, "landscape");
     mapData.shape = Shape.Concave;
+    mapData.sun = "#14051A";
+    mapData.background = "#14051A";
 
     const minTreeAltitude = 100;
     const maxTreeAltitude = 140;
