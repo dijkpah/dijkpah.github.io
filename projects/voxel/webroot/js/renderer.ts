@@ -63,9 +63,24 @@ let _map = {
     shape: Shape.Flat,
 };
 
-function setMap({ altitudes, colors, background, sun, dimension, name }: MapData): void {
-    if(dimension !== Math.sqrt(altitudes.length)) {
-        throw new Error("Only square maps are supported");
+function setMap({ altitudes, colors, background, sun, dimension, name, shape }: MapData): void {
+    const width = dimension;
+    const height = altitudes.length / width;
+    const newDimension = 2**(Math.ceil(Math.log(Math.max(width, height))/Math.log(2)));
+
+    if(newDimension !== dimension) {
+        const newAltitudes = new Uint8Array(newDimension*newDimension);
+        const newColors = new Uint32Array(newDimension * newDimension);
+            
+        for(let x=0; x<dimension; x++) {
+            for(let y=0; y<dimension; y++) {
+                newAltitudes[x+y*newDimension] = altitudes[x+y*dimension];
+                newColors[x+y*newDimension] = colors[x+y*dimension];
+            }
+        }
+        altitudes = newAltitudes;
+        colors = newColors;
+        dimension = newDimension;
     }
 
     CANVAS_ELEM.style.setProperty("background", background);

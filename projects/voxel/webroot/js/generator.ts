@@ -205,8 +205,8 @@ const rainbow: GeneratorConfig = {
 
 const models = {
     boat: {
-        width: 32,
-        height: 32,
+        width: 28,
+        height: 17,
     }
 } as const satisfies Record<string, ModelDimensions>;
 
