@@ -8,14 +8,10 @@ type GeneratorConfig = {
     width: number,
     height: number,
     palette: ABGR[], // array of length 256
-    trees: {
-        maxTreeAltitude: number,
-        minTreeAltitude: number,
-        treeDensity: number,
-    },
     iterations: number,
     background: hexColor,
     sun: hexColor,
+    shape: number,
 }
 
 type ModelDimensions = {
@@ -45,12 +41,8 @@ const materials: Record<string, hexColor> = {
 const landscape: GeneratorConfig = {
     height: 1024,
     width: 1024,
-    trees: {
-        maxTreeAltitude: 140,
-        minTreeAltitude: 100,
-        treeDensity: 0.05,
-    },
     iterations: 5,
+    shape: Shape.Flat,
     background: DEFAULT_BACKGROUND_COLOR,
     sun: DEFAULT_SUN_COLOR,
 
@@ -77,12 +69,8 @@ const landscape: GeneratorConfig = {
 const rainbow: GeneratorConfig = {
     height: 2048,
     width: 2048,
-    trees: {
-        maxTreeAltitude: 0,
-        minTreeAltitude: 0,
-        treeDensity: 0
-    },
     iterations: 7,
+    shape: Shape.Flat,
     background: "#FFFFFF",
     sun: DEFAULT_SUN_COLOR,
     
@@ -332,11 +320,85 @@ function fBm(x: number, y: number, period: number, octaves: number): number {
 }
 
 /*******************************************************************************
- * Map generator functions
+ * Map generators
  ******************************************************************************/
 
-async function generateMap(config: GeneratorConfig, name: string): Promise<void> {
-    const { width, height, iterations, palette, background, sun } = config;
+function generateRainbow(): void {
+    const mapData = generateMap(rainbow, "rainbow");
+    generateShadow(mapData);
+    setMap(mapData);
+}
+
+async function generateLandscape(): Promise<void> {
+    const mapData = generateMap(landscape, "landscape");
+
+    const minTreeAltitude = 100;
+    const maxTreeAltitude = 140;
+    const treeDensity = 0.05;
+    const waterLevel = 60;
+
+    generateTrees(mapData, minTreeAltitude, maxTreeAltitude, treeDensity);
+    generateShadow(mapData);
+    await generateWater(mapData, waterLevel, true);
+
+    setMap(mapData);
+}
+
+async function generateHalo(): Promise<void> {
+    const { width, height } = landscape;
+
+    const mapData = generateMap(landscape, "landscape");
+    mapData.shape = Shape.Concave;
+
+    const minTreeAltitude = 100;
+    const maxTreeAltitude = 140;
+    const treeDensity = 0.05;
+    const waterLevel = 60;
+
+    generateTrees(mapData, minTreeAltitude, maxTreeAltitude, treeDensity);
+    generateShadow(mapData);
+    await generateWater(mapData, waterLevel, true);
+
+    for(let x=0; x<width; x++) {
+        for(let y=0; y<height; y++) {
+            const i = width * x + y;
+            // Space
+            if(x < 384 || x > 640) {
+                mapData.colors[i] = hexColorToABGR("#14051A");
+                mapData.altitudes[i] = 0;
+            } 
+            // Ring 
+            else if([384, 385, 386, 638, 639, 640].includes(x)) {
+                mapData.colors[i] = hexColorToABGR("#33333D");
+                mapData.altitudes[i] = 200;
+            }
+        }
+    }
+
+    // Stars
+    for(let x=0; x<width; x++) {
+        for(let y=0; y<height; y++) {
+            const i = width * x + y;
+            if(x < 383 || x > 641) {
+                if(Math.random() > 0.999) {
+                    mapData.colors[i] = interpolate(0xFFFFFFFF, mapData.colors[i], 0.5);
+                    mapData.colors[i+1] = interpolate(0xFFFFFFFF, mapData.colors[i], 0.8);
+                    mapData.colors[i-1] = interpolate(0xFFFFFFFF, mapData.colors[i], 0.8);
+                    mapData.colors[i+width] = interpolate(0xFFFFFFFF, mapData.colors[i], 0.8);
+                    mapData.colors[i-width] = interpolate(0xFFFFFFFF, mapData.colors[i], 0.8);
+                }
+            } 
+        }
+    }
+    setMap(mapData);
+}
+
+/*******************************************************************************
+ * Map generator helpers
+ ******************************************************************************/
+
+function generateMap(config: GeneratorConfig, name: string): MapData {
+    const { width, height, iterations, palette, background, sun, shape } = config;
 
     const mapData: MapData = { 
         name,
@@ -345,6 +407,7 @@ async function generateMap(config: GeneratorConfig, name: string): Promise<void>
         background, 
         dimension: width,
         sun,
+        shape,
     };
     
     // Reshuffle perm
@@ -357,18 +420,14 @@ async function generateMap(config: GeneratorConfig, name: string): Promise<void>
             const val = fBm(x*freq, y*freq, width*freq, iterations);
             var z = Math.min(255, (val + 0.5) * 255);
             const i = width * x + y;
-            mapData.altitudes[i] = z;
+            mapData.altitudes[i] = z; // Math.min(255, (Math.max(z, 128) - 128)*3);
             mapData.colors[i] = palette[Math.floor(z)];
         }
     }
-
-    generateTrees(config, mapData);
-    generateShadow(mapData);    
-    setMap(mapData);
+    return mapData;
 }
 
-function generateTrees(config: GeneratorConfig, { altitudes, colors, dimension }: MapData): void {
-    const { maxTreeAltitude, minTreeAltitude, treeDensity } = config.trees;
+function generateTrees({ altitudes, colors, dimension }: MapData, minTreeAltitude: number, maxTreeAltitude: number, treeDensity: number): void {
     
     const trees = [];
     // Decide where to plant
@@ -438,6 +497,49 @@ function generateShadow({ altitudes, colors, dimension }: MapData): void {
             color = altitudes[(i - dimension+altitudes.length) % altitudes.length] > z ? interpolate(color, 0xFF000000, 0.03) : color;
             color = altitudes[(i-1+altitudes.length) % altitudes.length] > z ? interpolate(color, 0xFF000000, 0.03) : color;
             colors[i] = color;
+        }
+    }
+}
+
+async function generateWater({ colors, altitudes, dimension }: MapData, waterLevel: number, withBoat = false): Promise<void> {
+    const minLevel = waterLevel;
+    const boat = await loadModel("boat");
+
+    let minZ = 255;
+    let minZX = 0;
+    let minZY = 0
+
+    for(let x=0; x<dimension; x++) {
+        for(let y=0; y<dimension; y++) {
+
+            const i = x + y * dimension;
+            const z = altitudes[i];
+
+            // Lowest point on map
+            if(z < minZ) {
+                minZ = z;
+                minZX = x;
+                minZY = y;
+            }
+            if(z < minLevel) {
+                altitudes[i] = minLevel;
+            }
+        }
+    }
+
+    // Add boat at lowest point
+    if(withBoat) {
+        for(let x=0; x<boat.width; x++) {
+            for(let y=0; y<boat.height; y++) {
+                const iBoat = x + y *boat.width;
+                const color = boat.colors[iBoat];
+                if(color === 0) {
+                    continue;
+                }
+                const i = (minZX + x) + (minZY + y)*dimension;
+                colors[i] = color;
+                altitudes[i] = minLevel + boat.altitudes[iBoat]; //
+            }
         }
     }
 }

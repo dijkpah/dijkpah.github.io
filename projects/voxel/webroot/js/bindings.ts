@@ -170,6 +170,10 @@ function changeCameraDistance(distance: number): void {
     }
 }
 
+function changeMapShape(val: number): void {
+    _map.shape = val;
+}
+
 function changeFade(name: string): void {
     switch(name) {
         case "none": settings.fade = noFade; break;
@@ -207,8 +211,9 @@ async function loadMap(filenames: string): Promise<void> {
 
     if(type === "generate") {
         switch(name) {
-            case "rainbow": generateMap(rainbow, name); break;
-            case "landscape": generateMap(landscape, name); break;
+            case "rainbow": generateRainbow(); break;
+            case "halo": generateHalo(); break;
+            case "landscape": generateLandscape(); break;
         }
     } else if(type === "map") {
         const [colorData, heightData] = await loadImagesAsync([`maps/${name}_color.png`, `maps/${name}_height.png`]);
@@ -275,7 +280,8 @@ function imagesToMapData(colorData: ImageData, heightData: ImageData, name: stri
         colors: new Uint32Array(width * height),
         background: DEFAULT_BACKGROUND_COLOR, 
         sun: DEFAULT_SUN_COLOR,
-        dimension: width 
+        dimension: width,
+        shape: Shape.Flat,
     };
 
     for(let i=0; i<width*height; i++) {
@@ -374,7 +380,8 @@ async function uploadGoxel(file: File): Promise<void> {
         colors: new Uint32Array(dimension * dimension),
         background: DEFAULT_BACKGROUND_COLOR, 
         sun: DEFAULT_SUN_COLOR,
-        dimension 
+        dimension,
+        shape: Shape.Flat,
     };
 
     // Read color and altitude (z-index)

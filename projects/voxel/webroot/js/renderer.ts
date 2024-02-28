@@ -5,6 +5,11 @@
 type hexColor = `#${string}`;
 type altitude = number; // between 0 - 255
 type ABGR = number; // UInt32 RGBA with reverse byte order
+const enum Shape {
+    Concave = -0.5,
+    Flat = 0,
+    Convex = 0.5,
+}
 type MapData = {
     name: string,
     altitudes: Uint8Array,
@@ -12,6 +17,7 @@ type MapData = {
     background: hexColor,
     sun: hexColor,
     dimension: number,
+    shape: number,
 };
 
 /*******************************************************************************
@@ -54,6 +60,7 @@ let _map = {
     colors:    new Uint32Array(1024*1024), // 1024 * 1024 int array with RGB colors
     backgroundColor: hexColorToABGR(DEFAULT_BACKGROUND_COLOR),
     sunColor: hexColorToABGR(DEFAULT_SUN_COLOR),
+    shape: Shape.Flat,
 };
 
 function setMap({ altitudes, colors, background, sun, dimension, name }: MapData): void {
@@ -66,6 +73,7 @@ function setMap({ altitudes, colors, background, sun, dimension, name }: MapData
         name,
         altitudes,
         colors,
+        shape,
         backgroundColor: hexColorToABGR(background),
         sunColor: hexColorToABGR(sun),
         height: dimension,
@@ -82,6 +90,7 @@ function getMap(): Readonly<MapData> {
         dimension: _map.width,
         background: abgrToHexColor(_map.backgroundColor),
         sun: abgrToHexColor(_map.sunColor),
+        shape: _map.shape,
     };
 }
 /*******************************************************************************
@@ -271,11 +280,12 @@ function render(): void {
 
         const mask = fade(z) << 24 | 0x00FFFFFF; 
         const invZ = scaleHeight / z;
+        const roll = _map.shape * z;
         
         for(let x=0; x < screenWidth; x++) {
             
             const mapOffset = ((ply & mapWidthPeriod) << _map.shift) + (plx & mapHeightPeriod);
-            const heightOnScreen = (camera.height - _map.altitudes[mapOffset]) * invZ + camera.horizon;
+            const heightOnScreen = (camera.height - _map.altitudes[mapOffset]) * invZ + roll + camera.horizon; // + 0.3*z for roll
 
             const yTop = Math.max(heightOnScreen | 0, 0);
             const yBottom = hiddenY[x];
