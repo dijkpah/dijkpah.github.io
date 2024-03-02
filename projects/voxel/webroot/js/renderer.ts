@@ -63,7 +63,7 @@ let _map = {
     shape: Shape.Flat,
 };
 
-function setMap({ altitudes, colors, background, sun, dimension, name, shape }: MapData): void {
+function setMap({ altitudes, colors, background, sun, dimension, name, shape }: MapData, cameraPosition?: Partial<typeof camera>): void {
     const width = dimension;
     const height = altitudes.length / width;
     const newDimension = 2**(Math.ceil(Math.log(Math.max(width, height))/Math.log(2)));
@@ -94,6 +94,9 @@ function setMap({ altitudes, colors, background, sun, dimension, name, shape }: 
         height: dimension,
         width: dimension,
         shift: Math.log(dimension)/Math.log(2),
+    }
+    if(cameraPosition) {
+        camera = { ...camera, ...cameraPosition };
     }
 }
 

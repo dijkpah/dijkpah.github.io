@@ -392,7 +392,7 @@ async function generateHalo(): Promise<void> {
             } 
         }
     }
-    setMap(mapData);
+    setMap(mapData, { y: 512, angle: Math.PI/2, height: 150, horizon: 400 });
 }
 
 /*******************************************************************************
