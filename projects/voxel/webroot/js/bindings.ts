@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Menu 
-******************************************************************************/
+ ******************************************************************************/
 
 const menuOptions = ["map", "files", "controls",  "settings"] as const;
 let openedMenu = "map";
@@ -15,6 +15,22 @@ function openMenu(id: string): void {
 
     document.getElementById(id)?.classList.add("selected");
     document.getElementById(`menu-${id}`)?.classList.add("selected");
+}
+
+/*******************************************************************************
+ * Loading spinner
+ ******************************************************************************/
+
+async function showSpinner(): Promise<void> {
+    const spinnerElem = document.getElementById("spinner");
+    spinnerElem?.classList.add("visible");
+    // Give browser time to render spinner before continuing
+    await new Promise((resolve) => setTimeout(resolve, 50));
+}
+
+function hideSpinner(): void {
+    const spinnerElem = document.getElementById("spinner");
+    spinnerElem?.classList.remove("visible");
 }
 
 /*******************************************************************************
@@ -208,33 +224,39 @@ function changeResolution(val: number) {
 async function loadMap(filenames: string): Promise<void> {
     const files = filenames.split(";");
     const [ type, name ] = files;
+    
+    await showSpinner();
 
-    if(type === "generate") {
-        switch(name) {
-            case "rainbow": generateRainbow(); break;
-            case "halo": generateHalo(); break;
-            case "landscape": generateLandscape(); break;
-        }
-    } else if(type === "map") {
-        const [colorData, heightData] = await loadImagesAsync([`maps/${name}_color.png`, `maps/${name}_height.png`]);
-        const map = imagesToMapData(colorData, heightData, name);
-        if(name === "retrowave") {
-            map.sun = "#000000";
-            map.background = "#F5386E";
-            settings.background = sunLineBackground;
-            setMap(map, { x: 400, angle: -2*Math.PI, height: 100, horizon: HORIZON_HORIZONTAL });
-        } else if(name === "clouds") {
-            map.sun = "#427296";
-            map.background = "#FFFFFF";
-            settings.background = sunLineBackground;
+    try {
+        if(type === "generate") {
+            switch(name) {
+                case "rainbow": generateRainbow(); break;
+                case "halo": generateHalo(); break;
+                case "landscape": generateLandscape(); break;
+            }
+        } else if(type === "map") {
+            const [colorData, heightData] = await loadImagesAsync([`maps/${name}_color.png`, `maps/${name}_height.png`]);
+            const map = imagesToMapData(colorData, heightData, name);
+            if(name === "retrowave") {
+                map.sun = "#000000";
+                map.background = "#F5386E";
+                settings.background = sunLineBackground;
+                setMap(map, { x: 400, angle: -2*Math.PI, height: 100, horizon: HORIZON_HORIZONTAL });
+            } else if(name === "clouds") {
+                map.sun = "#427296";
+                map.background = "#FFFFFF";
+                settings.background = sunLineBackground;
+                setMap(map);
+            } else {
+                setMap(map);
+            }
+        } else if(type === "model") {
+            const [colorData, heightData] = await loadImagesAsync([`models/${name}_color.png`, `models/${name}_height.png`]);
+            const map = imagesToMapData(colorData, heightData, name);
             setMap(map);
-        } else {
-            setMap(map);
         }
-    } else if(type === "model") {
-        const [colorData, heightData] = await loadImagesAsync([`models/${name}_color.png`, `models/${name}_height.png`]);
-        const map = imagesToMapData(colorData, heightData, name);
-        setMap(map);
+    } finally {
+        hideSpinner();
     }
 }
 
