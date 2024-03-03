@@ -359,7 +359,7 @@ async function generateHalo(): Promise<void> {
 
     generateTrees(mapData, minTreeAltitude, maxTreeAltitude, treeDensity);
     generateShadow(mapData);
-    await generateWater(mapData, waterLevel, true);
+    await generateWater(mapData, waterLevel, false);
 
     for(let x=0; x<width; x++) {
         for(let y=0; y<height; y++) {
