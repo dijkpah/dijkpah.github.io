@@ -247,6 +247,24 @@ async function loadMap(filenames: string): Promise<void> {
                 map.background = "#FFFFFF";
                 settings.background = sunLineBackground;
                 setMap(map);
+            } else if(name === "morrowind_large_cartoon") {
+                for(let i=0; i<map.dimension*map.dimension; i++) {
+                    const z = heightData.data[i<<2];
+                    
+                    // Fade to sea colour
+                    if(z <= 18) {
+                        map.colors[i] = interpolate(map.colors[i], hexColorToABGR("#181417"), 0.5 + (0.5 - z/36));
+                    }
+
+                    // Fake waves
+                    if(z === 17 || z === 15) {
+                        map.colors[i] = interpolate(map.colors[i], 0xFFFFFFFF, 0.03);
+                    }
+                    if(z === 16) {
+                        map.colors[i] = interpolate(map.colors[i], 0xFFFFFFFF, 0.075);
+                    }
+                }
+                setMap(map, { x: 1500, y: 4000, angle: -0.5, height: 320, horizon: 60 });
             } else {
                 setMap(map);
             }

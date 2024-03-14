@@ -65,13 +65,18 @@
 
             <label>Load map</label>
             <section>
-                <select id="mapselector" size="1" onchange="loadMap(this.value);">
-                    <option selected value="map;comanche_mayan">Comanche Mayan</option>
+                <select id="mapselector" onchange="loadMap(this.value)">
+                    <option disabled>> Maps</option>
                     <option value="map;clouds">Clouds</option>
+                    <option selected value="map;comanche_mayan">Comanche Mayan</option>
+                    <option value="map;morrowind_large">Morrowind landscape</option>
+                    <option value="map;morrowind_large_cartoon">Morrowind map</option>
                     <option value="map;retrowave">Retrowave</option>
-                    <option value="generate;rainbow">Generate rainbow</option>
-                    <option value="generate;landscape">Generate landscape</option>
-                    <option value="generate;halo">Generate halo</option>
+                    <option disabled>> Generated maps</option>
+                    <option value="generate;halo">Halo</option>
+                    <option value="generate;landscape">Landscape</option>
+                    <option value="generate;rainbow">Rainbow</option>
+                    <option disabled>> Models</option>
                     <option value="model;boat">Boat</option>
                     <option value="model;castle">Castle</option>
                 </select>
