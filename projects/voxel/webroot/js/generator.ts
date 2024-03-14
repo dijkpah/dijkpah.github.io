@@ -207,6 +207,14 @@ const models = {
     boat: {
         width: 28,
         height: 17,
+    },
+    castle: {
+        width: 128,
+        height: 127,
+    },
+    tower: {
+        width: 30,
+        height: 32,
     }
 } as const satisfies Record<string, ModelDimensions>;
 
@@ -339,6 +347,23 @@ async function generateLandscape(): Promise<void> {
 
     generateTrees(mapData, minTreeAltitude, maxTreeAltitude, treeDensity);
     generateShadow(mapData);
+
+    // place tower on road
+    const { dimension, altitudes } = mapData;
+    let location = { x: 0, y: 0, z: 0 };
+    for(let x=0; x<dimension && location.z === 0; x++) {
+        for(let y=0; y<dimension; y++) {
+            const i = x + y * dimension;
+            const z = altitudes[i];
+            // Road height
+            if(z === 105) {
+                location = { x, y , z };
+                break;
+            }
+        }
+    }
+    await generateTower(location.x, location.y, location.z, mapData);
+
     await generateWater(mapData, waterLevel, true);
 
     setMap(mapData);
@@ -538,10 +563,28 @@ async function generateWater({ colors, altitudes, dimension }: MapData, waterLev
                 if(color === 0) {
                     continue;
                 }
-                const i = (minZX + x) + (minZY + y)*dimension;
+                const i = ((minZX + x) + (minZY + y)*dimension) % colors.length;
                 colors[i] = color;
-                altitudes[i] = minLevel + boat.altitudes[iBoat]; //
+                altitudes[i] = minLevel + boat.altitudes[iBoat]; 
             }
+        }
+    }
+}
+
+async function generateTower(mapX: number, mapY: number, mapZ: number, { colors, altitudes, dimension }: MapData): Promise<void> {
+
+    mapX = (mapX - models.tower.width / 2 + dimension) % dimension; // Align gate with point
+    const tower = await loadModel("tower");
+    for(let x=0; x<tower.width; x++) {
+        for(let y=0; y<tower.height; y++) {
+            const icastle = x + y *tower.width;
+            const color = tower.colors[icastle];
+            if(color === 0) {
+                continue;
+            }
+            const i = ((mapX + x) + (mapY + y)*dimension) % colors.length;
+            colors[i] = color;
+            altitudes[i] = mapZ + tower.altitudes[icastle]; //
         }
     }
 }
