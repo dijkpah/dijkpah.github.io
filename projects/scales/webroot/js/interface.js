@@ -4,6 +4,7 @@ var maxStrings = 12;
 var stringOffset = 5;
 var selectedKey = "E";
 var selectedScale;
+var showIntervals = false;
 
  $(function(){
 
@@ -22,7 +23,8 @@ var selectedScale;
         var url="?";
         url += "scale="+selectedScale+"&";
         url += "key="+selectedKey+"&";
-        url += "tuning="+scales.tuning;
+        url += "tuning="+scales.tuning+"&";
+        url += "intervals="+showIntervals;
         if(selectedScale === "custom"){
             url+="&notes="+scales.scales.custom;
         }
@@ -43,7 +45,7 @@ var selectedScale;
 		}
 		$("#string-"+stringNumber+" input").val(nextNote);
 		selectedTuning[stringNumber] = nextNote;
-		scales.drawNeck(selectedScale, selectedKey, selectedTuning);
+		scales.drawNeck(selectedScale, selectedKey, selectedTuning, showIntervals);
         updateURL();
 	});
 
@@ -52,7 +54,7 @@ var selectedScale;
 			var newTuning = [scales.notes[(scales.notes.indexOf(selectedTuning[0])+scales.notes.length - stringOffset) % scales.notes.length]];
 			selectedTuning = newTuning.concat(selectedTuning);
 			scales.changeTuning(selectedTuning);
-			scales.drawNeck(selectedScale, selectedKey);
+			scales.drawNeck(selectedScale, selectedKey, selectedTuning, showIntervals);
             updateURL();
 		}
 	});
@@ -61,7 +63,7 @@ var selectedScale;
 		if(selectedTuning.length > minStrings){
 			selectedTuning = selectedTuning.slice(1);
 			scales.changeTuning(selectedTuning);
-			scales.drawNeck(selectedScale, selectedKey);
+			scales.drawNeck(selectedScale, selectedKey, selectedTuning, showIntervals);
             updateURL();
 		}
 	});
@@ -71,7 +73,7 @@ var selectedScale;
 			var newTuning = [scales.notes[(scales.notes.indexOf(selectedTuning[selectedTuning.length-1])+stringOffset) % scales.notes.length]];
 			selectedTuning = selectedTuning.concat(newTuning);
 			scales.changeTuning(selectedTuning);
-			scales.drawNeck(selectedScale, selectedKey);
+			scales.drawNeck(selectedScale, selectedKey, selectedTuning, showIntervals);
             updateURL();
 		}
 	});
@@ -80,7 +82,7 @@ var selectedScale;
 		if(selectedTuning.length > minStrings){
 			selectedTuning = selectedTuning.slice(0, selectedTuning.length-1);
 			scales.changeTuning(selectedTuning);
-			scales.drawNeck(selectedScale, selectedKey);
+			scales.drawNeck(selectedScale, selectedKey, selectedTuning, showIntervals);
             updateURL();
 		}
 	});
@@ -96,8 +98,8 @@ var selectedScale;
 		}
 
 		$("#key input").val(selectedKey);
-		scales.drawNeck(selectedScale, selectedKey, selectedTuning);
-        scales.drawNotes(selectedKey);
+		scales.drawNeck(selectedScale, selectedKey, selectedTuning, showIntervals);
+        scales.drawNotes(selectedKey, showIntervals);
         updateURL();
 	});
 
@@ -122,7 +124,7 @@ var selectedScale;
 
 	$("#scale select").change(function(){
 		selectedScale = $("#scale select").val()
-		scales.drawNeck(selectedScale, selectedKey, selectedTuning);
+		scales.drawNeck(selectedScale, selectedKey, selectedTuning, showIntervals);
         if(selectedScale === "custom"){
             $("#notesselector").show();
         }else{
@@ -134,9 +136,22 @@ var selectedScale;
 
     $("#notes").click(function(e){
         var note = e.target.innerHTML;
+        if(showIntervals){
+            var clickedIndex = Array.from($("#notes").children()).indexOf(e.target);
+            note = scales.notes[(scales.notes.indexOf(selectedKey) + clickedIndex) % 12];
+        }
         scales.toggleCustomNote(selectedKey, note);
-        scales.drawNotes(selectedKey);
-        scales.drawNeck("custom", selectedKey, selectedTuning);
+        scales.drawNotes(selectedKey, showIntervals);
+        scales.drawNeck("custom", selectedKey, selectedTuning, showIntervals);
+        updateURL();
+    });
+
+    $("#show-intervals").change(function(){
+        showIntervals = $(this).prop("checked");
+        scales.drawNeck(selectedScale, selectedKey, selectedTuning, showIntervals);
+        if(selectedScale === "custom"){
+            scales.drawNotes(selectedKey, showIntervals);
+        }
         updateURL();
     });
 
@@ -145,11 +160,13 @@ var selectedScale;
         var getSelectedTuning = findGetParameter("tuning"),
             getSelectedScale  = findGetParameter("scale"),
             getSelectedKey    = findGetParameter("key"),
-            getSelectedNotes  = findGetParameter("notes");
+            getSelectedNotes  = findGetParameter("notes"),
+            getShowIntervals  = findGetParameter("intervals");
 
         selectedScale  = getSelectedScale ? getSelectedScale  : selectedScale;
         selectedKey    = getSelectedKey   ? getSelectedKey.toUpperCase() : selectedKey;
         selectedTuning = getSelectedTuning? getSelectedTuning.toUpperCase().split(",") : selectedTuning;
+        showIntervals  = getShowIntervals === "true";
 
         if(getSelectedNotes){
             scales.scales["custom"] = getSelectedNotes.split(",").map(note => parseInt(note));
@@ -161,10 +178,11 @@ var selectedScale;
     	/* DRAW GUI */
 		$("#key input").val(selectedKey);
 		$("#scale select").val(selectedScale);
+        $("#show-intervals").prop("checked", showIntervals);
 
     	scales.changeTuning(selectedTuning);
-    	scales.drawNeck(selectedScale, selectedKey, selectedTuning);
-        scales.drawNotes(selectedKey);
+    	scales.drawNeck(selectedScale, selectedKey, selectedTuning, showIntervals);
+        scales.drawNotes(selectedKey, showIntervals);
 
         if(selectedScale !== "custom"){
             $("#notesselector").hide();
