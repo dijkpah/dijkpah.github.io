@@ -1,5 +1,6 @@
 function Scales(){//0,  1,    2,   3,   4,    5,   6,    7,   8,   9,    10,  11
 	this.notes = ["A", "B♭", "B", "C", "D♭", "D", "E♭", "E", "F", "G♭", "G", "A♭"];
+	this.intervals = ["1", "♭9", "9", "♭3", "3", "11", "♭5", "5", "♯5", "13", "♭7", "7"];
 	this.scales = {//Scales in A
 		"chromatic":		[0,1,2,3,4,5,6,7,8,9,10,11], //this.notes
 		"dorian":			[0,2,3,5,7,9,10],	//A, B, C, D, E, F#,G
@@ -50,7 +51,7 @@ function Scales(){//0,  1,    2,   3,   4,    5,   6,    7,   8,   9,    10,  11
 		return result;
 	};
 
-	function drawNeck(scale, key, tuning){
+	function drawNeck(scale, key, tuning, showIntervals){
 		if(!tuning){
 			tuning = this.tuning;
 		}
@@ -73,7 +74,14 @@ function Scales(){//0,  1,    2,   3,   4,    5,   6,    7,   8,   9,    10,  11
 					var div = document.createElement("div");
 					div.style.left = "-"+(Math.max(3.9-0.088*fret,2.1))+"em";
 					div.className = "note" + (note === key ? " key":"");
-					div.innerHTML = note;
+					if(showIntervals){
+						var keyIndex = this.notes.indexOf(key);
+						var noteIndex = this.notes.indexOf(note);
+						var interval = (noteIndex - keyIndex + 12) % 12;
+						div.innerHTML = this.intervals[interval];
+					}else{
+						div.innerHTML = note;
+					}
 					td.appendChild(div);
 				}
 
@@ -97,20 +105,31 @@ function Scales(){//0,  1,    2,   3,   4,    5,   6,    7,   8,   9,    10,  11
 		$('#neck').html(table);
 	};
 
-	function drawNotes(key){
+	function drawNotes(key, showIntervals){
 		var scale = this.scales["custom"];
 		var keyIndex = this.notes.indexOf(key);
 		var fragment = document.createDocumentFragment();
 
 		for(var i=0;i < this.notes.length;i++){
 			var note = document.createElement("div");
-			var diff = (i - keyIndex+12)%12;//interval from key note
-			if(scale.indexOf(diff)>-1){
-				note.className = "note" + (this.notes[i]===key ? " key" : "");
+			if(showIntervals){
+				var noteAtPosition = this.notes[(keyIndex + i) % 12];
+				var diff = (this.notes.indexOf(noteAtPosition) - keyIndex + 12) % 12;
+				if(scale.indexOf(diff)>-1){
+					note.className = "note" + (noteAtPosition === key ? " key" : "");
+				}else{
+					note.className = "disabled note" + (noteAtPosition === key ? " key" : "");
+				}
+				note.innerHTML = this.intervals[i];
 			}else{
-				note.className = "disabled note" + (this.notes[i]===key ? " key" : "");
+				var diff = (i - keyIndex+12)%12;
+				if(scale.indexOf(diff)>-1){
+					note.className = "note" + (this.notes[i]===key ? " key" : "");
+				}else{
+					note.className = "disabled note" + (this.notes[i]===key ? " key" : "");
+				}
+				note.innerHTML = this.notes[i];
 			}
-			note.innerHTML = this.notes[i];
 			fragment.appendChild(note);
 		}
 		$('#notes').html(fragment);
