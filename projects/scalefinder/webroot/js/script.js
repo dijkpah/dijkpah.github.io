@@ -78,8 +78,8 @@ function Scales(){
         ]},
         {name:"other", code: "", additions: [
             { code: "m(#5)", notes: [0, 3, 8]},           //C E♭ G#
-            { code: "(♭5)", notes: [0, 4, 6]},           //C E G♭
-            { code: "7(♭5)",notes: [0, 4, 6, 10]},       //C E G♭ B♭
+            { code: "(♭5)",  notes: [0, 4, 6]},           //C E G♭
+            { code: "7(♭5)", notes: [0, 4, 6, 10]},       //C E G♭ B♭
             { code: "5",     notes: [0, 7]},              //C   G
         ]},
     ];
